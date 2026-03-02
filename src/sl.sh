@@ -29,7 +29,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 slowout() {
-    perl -e '
+    PERL_BADLANG=0 perl -e '
         $|=1;
         my $delay = 0.0005;
         while (sysread(STDIN, my $c, 1)) {
@@ -54,7 +54,11 @@ slowout() {
 
 case "$version" in
     1985)
-        script -q /dev/null "$bindir/sl-$version" "$@" | slowout
+        if script --help 2>&1 | grep -q -- '--command'; then
+            script -qc "$bindir/sl-$version" /dev/null
+        else
+            script -q /dev/null "$bindir/sl-$version" "$@"
+        fi | slowout
         ;;
     *)
         exec "$bindir/sl-$version" "$@"
