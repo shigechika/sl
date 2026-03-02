@@ -1,7 +1,15 @@
 #!/bin/bash
 
 version=2023
-bindir=$(dirname "$0")/../libexec/sl-classic
+self=$0
+if [ -L "$self" ]; then
+    link=$(readlink "$self")
+    case "$link" in
+        /*) self=$link ;;
+        *)  self=$(dirname "$self")/$link ;;
+    esac
+fi
+bindir=$(dirname "$self")/../libexec/sl-classic
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
