@@ -16,6 +16,22 @@ void mvprintw(int y, int x, const char* fmt, const char* str) {
     printf(fmt, str);
 }
 
+/* Print at (y, x) but limit output to n display columns.
+   All SL art characters are single-width, so 1 codepoint = 1 column. */
+void mvputns(int y, int x, const char *s, int n) {
+    if (n <= 0) return;
+    tputs(tparm(tgoto(cursor_address, x, y)), 1, putchar);
+    int col = 0;
+    while (*s && col < n) {
+        unsigned char c = (unsigned char)*s;
+        int bytes = (c < 0x80) ? 1 : (c < 0xE0) ? 2 : (c < 0xF0) ? 3 : 4;
+        for (int i = 0; i < bytes && s[i]; i++)
+            putchar(s[i]);
+        s += bytes;
+        col++;
+    }
+}
+
 /* Trailing spaces on body lines erase remnants when not sweeping.
    Smoke line gets " o" appended each frame so it self-extends. */
 char *sl[] = {
@@ -32,7 +48,7 @@ int main() {
     setupterm(NULL, STDOUT_FILENO, NULL);
     int COLS = tigetnum("cols"), LINES = tigetnum("lines");
     int len = strlen(sl[0]), height = sizeof(sl)/sizeof(sl[0]);
-    int start_x = COLS - len, start_y = LINES - height - 1;
+    int start_x = COLS, start_y = LINES - height - 1;
     char dch2[20] = "", *dch2p = tparm(tigetstr("dch"), 2);
     if (dch2p != NULL)
         strcpy(dch2, dch2p);
@@ -40,10 +56,11 @@ int main() {
     int clear_col = (env && *env) ? atoi(env) : 0;
     char smoke[1024]; strcpy(smoke, sl[0]); sl[0] = smoke;
     for (int x = start_x/2*2; x >= 0; x -= 2) {
+        int maxcols = COLS - x;
         for (int y = 0; y < height; y++) {
             if (x <= clear_col)
                 mvprintw(start_y + y, 0, "%s", dch2);
-            mvprintw(start_y + y, x, "%s", sl[y]);
+            mvputns(start_y + y, x, sl[y], maxcols);
         }
         fflush(stdout);
         strcat(smoke, " o");

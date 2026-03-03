@@ -7,6 +7,8 @@ all: sl-1985 sl-2010 sl-2023 sl-2026
 
 sl-1985: sl.c
 	$(CC) -std=c89 -w \
+		-Wno-incompatible-function-pointer-types \
+		-Wno-incompatible-pointer-types \
 		$(NCURSES_CFLAGS) \
 		-include term.h -DCM=cursor_address \
 		-o $@ $< $(NCURSES_LIBS)
