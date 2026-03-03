@@ -1,0 +1,14 @@
+{{$NEXT}}
+
+v2023 2024-11-27
+
+    - Add sl-2023: Unicode art version with box-drawing characters
+    - Add Makefile
+
+v2010 2013-12-08
+
+    - Add sl-2010: direct terminal control version
+
+v1985 1985-08-10
+
+    - Original SL with K&R C and curses
