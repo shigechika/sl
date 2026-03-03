@@ -54,16 +54,18 @@ int main() {
         strcpy(dch2, dch2p);
     char *env = getenv("SL_SWEEP_COL");
     int clear_col = (env && *env) ? atoi(env) : 0;
-    if (getenv("SL_SWEEP_ALL"))
-        clear_col = COLS;
+    int sweep_all = getenv("SL_SWEEP_ALL") != NULL;
     char smoke[1024]; strcpy(smoke, sl[0]); sl[0] = smoke;
     for (int x = start_x/2*2; x >= 0; x -= 2) {
         int maxcols = COLS - x;
-        for (int y = 0; y < height; y++) {
-            if (x <= clear_col)
-                mvprintw(start_y + y, 0, "%s", dch2);
-            mvputns(start_y + y, x, sl[y], maxcols);
+        if (x <= clear_col) {
+            int y0 = sweep_all ? 0 : start_y;
+            int y1 = sweep_all ? LINES : start_y + height;
+            for (int y = y0; y < y1; y++)
+                mvprintw(y, 0, "%s", dch2);
         }
+        for (int y = 0; y < height; y++)
+            mvputns(start_y + y, x, sl[y], maxcols);
         fflush(stdout);
         strcat(smoke, " o");
         usleep(100000);

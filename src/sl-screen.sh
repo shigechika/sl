@@ -8,6 +8,8 @@
 # Terminal utilities
 ##############################################################################
 
+NBSP=$'\xc2\xa0'  # U+00A0 Non-Breaking Space
+
 # Set TERM_LINES and TERM_COLS from the terminal
 get_terminal_size() {
     if size=$(stty size </dev/tty 2>/dev/null); then
@@ -18,6 +20,7 @@ get_terminal_size() {
         TERM_COLS=$(tput cols 2>/dev/null || echo "${COLUMNS:-80}")
     fi
 }
+
 
 # Move cursor to (row, col) and print.
 # Usage: mvprintf ROW COL FORMAT [ARGS...]
@@ -85,6 +88,13 @@ normalize_screen_text() {
 # Output is normalized (trailing spaces stripped).
 get_visible_screen() {
     get_terminal_size
+    # Write NBSP (U+00A0) at the screen bottom to ensure the terminal
+    # buffer extends to TERM_LINES.  Without a visible character,
+    # AppleScript "contents" may omit trailing empty lines, causing
+    # tail to pick up scrollback data after clear.
+    # NBSP is stripped by normalize_screen_text and does not affect
+    # sweep calculations.  The last line is outside the SL area.
+    mvprintf "$TERM_LINES" 1 '%s' "$NBSP" > /dev/tty
     local screen
     screen=$(capture_screen_text) || return 1
     screen=$(normalize_screen_text "$screen")

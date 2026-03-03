@@ -11,6 +11,9 @@
 # Options:
 #   -d          Show debug info on the last line before running
 #
+# Version-specific options (sl 2026):
+#   -a          Sweep the entire screen
+#
 # Subcommands:
 #   capture     Dump captured screen text
 #   sweep-area  Show the 7-line area where SL runs
@@ -54,6 +57,52 @@ resolve_latest() {
     echo 2023
 }
 
+# Run sl-2026 with sweep detection and optional flags.
+# Usage: sl2026 [-an] [ARGS...]
+#   -a  Sweep the entire screen (SL_SWEEP_ALL)
+#   -n  Dry run: show debug info without running
+sl2026() {
+    local OPTIND opt sweep_all=0 dryrun=0
+    while getopts "an" opt; do
+        case "$opt" in
+            a) sweep_all=1 ;;
+            n) dryrun=1 ;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    source "$bindir/sl-2026-sweep.sh"
+    if ((sweep_all)); then
+        export SL_SWEEP_ALL=1
+    fi
+    local clear_col=9999
+    if ((sweep_all)); then
+        col=$(get_visible_screen | calc_max_display_col)
+    else
+        col=$(calc_clear_col)
+    fi
+    if [[ -n "$col" ]] && ((col >= 0)); then
+        clear_col=$col
+    fi
+    if ((debug_flag || dryrun)); then
+        get_terminal_size
+        printf "========== %s %s %s %sx%s %s" \
+            "${TERM:-}" "${TERM_PROGRAM:-}" "${LANG:-}" "$TERM_COLS" "$TERM_LINES" "$clear_col"
+        ((dryrun)) && { echo; return; }
+    fi
+    SL_SWEEP_COL=$clear_col exec "$bindir/sl-$version" "$@"
+}
+
+# Run sl-1985 via script(1) with per-character delay output.
+# sl-1985 uses curses and needs a pty; use script(1) to provide one.
+sl1985() {
+    if script --help 2>&1 | grep -q -- '--command'; then
+        script -qc "$bindir/sl-1985" /dev/null
+    else
+        script -q /dev/null "$bindir/sl-1985" "$@"
+    fi | slowout
+}
+
 # Output filter for sl-1985: add per-character delay for retro feel.
 # Strips smcup/rmcup sequences to prevent alternate screen switching.
 slowout() {
@@ -90,12 +139,15 @@ slowout() {
 ##############################################################################
 
 debug_flag=0
-while getopts "d" opt; do
-    case "$opt" in
-        d) debug_flag=1 ;;
+passthru=()
+while [[ "${1:-}" == -* ]]; do
+    case "$1" in
+        -d) debug_flag=1; shift ;;
+        --) shift; break ;;
+        *)  passthru+=("$1"); shift ;;
     esac
 done
-shift $((OPTIND - 1))
+set -- "${passthru[@]}" "$@"
 
 subcmd=${1:-}
 case "$subcmd" in
@@ -152,26 +204,10 @@ esac
 
 case "$version" in
     1985)
-        # sl-1985 uses curses and needs a pty; use script(1) to provide one
-        if script --help 2>&1 | grep -q -- '--command'; then
-            script -qc "$bindir/sl-$version" /dev/null
-        else
-            script -q /dev/null "$bindir/sl-$version" "$@"
-        fi | slowout
+        sl1985 "$@"
         ;;
     2026)
-        # Detect the rightmost text column; default 9999 (always sweep)
-        source "$bindir/sl-2026-sweep.sh"
-        clear_col=9999
-        if col=$(calc_clear_col); then
-            ((col >= 0)) && clear_col=$col
-        fi
-        if ((debug_flag)); then
-            get_terminal_size
-            printf "========== %s %s %s %sx%s %s" \
-                "${TERM:-}" "${TERM_PROGRAM:-}" "${LANG:-}" "$TERM_COLS" "$TERM_LINES" "$clear_col"
-        fi
-        SL_SWEEP_COL=$clear_col exec "$bindir/sl-$version" "$@"
+        sl2026 "$@"
         ;;
     *)
         exec "$bindir/sl-$version" "$@"
