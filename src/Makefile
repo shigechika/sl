@@ -3,9 +3,21 @@ SHELL := /bin/bash
 NCURSES_CFLAGS := $(shell ncurses6-config --cflags 2>/dev/null)
 NCURSES_LIBS   := $(or $(shell ncurses6-config --libs 2>/dev/null),-lcurses)
 
+NAME    := sl
+GIT     := git -C ..
+CURRENT := $(shell git -C .. describe --tags --abbrev=0 2>/dev/null)
+YEAR    := $(shell date +%Y)
+DATE    := $(shell date +%Y-%m-%d)
+MAKE    := $(MAKE) --no-print-directory
+
+.ONESHELL:
+.PHONY: all build check check-changes release clean
+
+VER := $(CURRENT)
+
 all: sl-1985 sl-2010 sl-2023 sl-2026
 
-sl-1985: sl.c
+sl-1985: sl-1985.c
 	$(CC) -std=c89 -w \
 		-Wno-incompatible-function-pointer-types \
 		-Wno-incompatible-pointer-types \
@@ -15,6 +27,60 @@ sl-1985: sl.c
 
 %: %.c
 	$(CC) $(NCURSES_CFLAGS) -o $@ $< $(NCURSES_LIBS)
+
+build: sl.1
+	@echo "Version: $(VER)"
+	grep '^\.TH' sl.1
+
+sl.1: README.md deflist.lua
+	pandoc -s -t man -L deflist.lua \
+		-M title=SL -M section=1 -M date="$(YEAR)" -M header="Steam Locomotive" \
+		-V footer="$(NAME) $(VER)" \
+		README.md -o $@
+
+check:
+	@$(GIT) diff --quiet -- ':!src/$(NAME).1' ':!src/$(NAME)' ':!Changes' \
+	 && $(GIT) diff --cached --quiet -- ':!src/$(NAME).1' ':!src/$(NAME)' ':!Changes' \
+		|| { echo "ERROR: uncommitted changes"; exit 1; }
+	echo "Working tree is clean"
+
+check-changes:
+	@awk '/\{\{.NEXT\}\}/{f=1; next} f && /^[[:space:]]+[^[:space:]]/{ok=1; exit} f && /^[^[:space:]]/{exit 1} END{exit(ok ? 0 : 1)}' ../Changes \
+		|| { echo "ERROR: No entries under {{\$$NEXT}} in Changes"; exit 1; }
+	echo "Changes OK"
+
+release:
+	@set -e
+	test -n "$(VERSION)" || { echo "ERROR: VERSION required: make release VERSION=v2026"; exit 1; }
+	$(GIT) diff --quiet -- ':!src/$(NAME).1' ':!src/$(NAME)' ':!Changes' \
+	 && $(GIT) diff --cached --quiet -- ':!src/$(NAME).1' ':!src/$(NAME)' ':!Changes' \
+		|| { echo "ERROR: uncommitted changes"; exit 1; }
+	echo "$(VERSION)" | grep -qE '^v[0-9]' \
+		|| { echo "ERROR: VERSION must start with v"; exit 1; }
+	! $(GIT) tag -l | grep -qx "$(VERSION)" \
+		|| { echo "ERROR: tag $(VERSION) already exists"; exit 1; }
+	if grep -q '^$(VERSION) ' ../Changes; then
+		echo "Changes already has $(VERSION) entry, skipping rewrite"
+	else
+		awk '/\{\{.NEXT\}\}/{f=1; next} f && /^[[:space:]]+[^[:space:]]/{ok=1; exit} f && /^[^[:space:]]/{exit 1} END{exit(ok ? 0 : 1)}' ../Changes \
+			|| { echo "ERROR: No entries under {{\$$NEXT}} in Changes"; exit 1; }
+		sed -i '' 's/{{\$$NEXT}}/{{\$$NEXT}}\'$$'\n''\'$$'\n''$(VERSION) $(DATE)/' ../Changes
+	fi
+	echo "Releasing $(VERSION) (current: $(CURRENT))"
+	sed -i '' 's/^VERSION=.*/VERSION=$(VERSION)/' sl
+	rm -f sl.1
+	$(MAKE) build VER=$(VERSION)
+	$(GIT) add -u
+	msg="Checking in changes prior to tagging of version $(VERSION)."$$'\n\n'"Changelog diff is:"$$'\n\n'"$$($(GIT) --no-pager diff --cached -- Changes)"
+	echo "$$msg"
+	echo "---"
+	$(GIT) --no-pager diff --cached --stat
+	read -p "Commit and tag $(VERSION)? [y/N] " ans
+	[ "$$ans" = y ] || { echo "Aborted"; exit 1; }
+	$(GIT) commit -m "$$msg"
+	$(GIT) tag $(VERSION)
+	$(GIT) push origin main $(VERSION)
+	echo "Released $(VERSION)"
 
 clean:
 	rm -f sl-{1985,2010,2023,2026}

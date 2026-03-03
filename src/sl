@@ -138,11 +138,15 @@ slowout() {
 # Argument parsing
 ##############################################################################
 
+VERSION=v2026-dev
+
 debug_flag=0
 passthru=()
 while [[ "${1:-}" == -* ]]; do
     case "$1" in
         -d) debug_flag=1; shift ;;
+        -h|--help) man sl 2>/dev/null || echo "Usage: sl [-d] [version|subcommand] [options]"; exit 0 ;;
+        --version) echo "$VERSION"; exit 0 ;;
         --) shift; break ;;
         *)  passthru+=("$1"); shift ;;
     esac
