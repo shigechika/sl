@@ -44,7 +44,14 @@ char *sl[] = {
     "┴─O=O O=O─┴ з  \n"
 };
 
+#include "sl-coupler.h"
+
+coupler couplers[MAX_COUPLERS];
+int n_couplers = 0;
+
 int main() {
+    couple();
+
     setupterm(NULL, STDOUT_FILENO, NULL);
     int COLS = tigetnum("cols"), LINES = tigetnum("lines");
     int len = strlen(sl[0]), height = sizeof(sl)/sizeof(sl[0]);
@@ -56,6 +63,8 @@ int main() {
     int clear_col = (env && *env) ? atoi(env) : 0;
     int sweep_all = getenv("SL_SWEEP_ALL") != NULL;
     char smoke[1024]; strcpy(smoke, sl[0]); sl[0] = smoke;
+    for (int i = 0; i < n_couplers; i++)
+        if (couplers[i].init) couplers[i].init(&couplers[i], COLS, LINES);
     for (int x = start_x/2*2; x >= 0; x -= 2) {
         int maxcols = COLS - x;
         if (x <= clear_col) {
@@ -66,8 +75,12 @@ int main() {
         }
         for (int y = 0; y < height; y++)
             mvputns(start_y + y, x, sl[y], maxcols);
+        for (int i = 0; i < n_couplers; i++)
+            if (couplers[i].frame) couplers[i].frame(&couplers[i], COLS, LINES, x);
         fflush(stdout);
         strcat(smoke, " o");
         usleep(100000);
     }
+    for (int i = 0; i < n_couplers; i++)
+        if (couplers[i].cleanup) couplers[i].cleanup(&couplers[i], COLS, LINES);
 }
