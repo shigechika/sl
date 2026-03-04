@@ -11,11 +11,6 @@
 #include <stdio.h>
 #include <term.h>
 
-void mvprintw(int y, int x, const char* fmt, const char* str) {
-    tputs(tparm(tgoto(cursor_address, x, y)), 1, putchar);
-    printf(fmt, str);
-}
-
 /* Print at (y, x) but limit output to n display columns.
    All SL art characters are single-width, so 1 codepoint = 1 column. */
 void mvputns(int y, int x, const char *s, int n) {
@@ -44,30 +39,30 @@ char *sl[] = {
     "┴─O=O O=O─┴ з  \n"
 };
 
+#include "sl-coupler.h"
+
+int COLS, LINES;
+coupler couplers[MAX_COUPLERS];
+int n_couplers = 0;
+
 int main() {
+    couple();
+
     setupterm(NULL, STDOUT_FILENO, NULL);
-    int COLS = tigetnum("cols"), LINES = tigetnum("lines");
+    COLS = tigetnum("cols"); LINES = tigetnum("lines");
     int len = strlen(sl[0]), height = sizeof(sl)/sizeof(sl[0]);
     int start_x = COLS, start_y = LINES - height - 1;
-    char dch2[20] = "", *dch2p = tparm(tigetstr("dch"), 2);
-    if (dch2p != NULL)
-        strcpy(dch2, dch2p);
-    char *env = getenv("SL_SWEEP_COL");
-    int clear_col = (env && *env) ? atoi(env) : 0;
-    int sweep_all = getenv("SL_SWEEP_ALL") != NULL;
     char smoke[1024]; strcpy(smoke, sl[0]); sl[0] = smoke;
+    CALL_COUPLERS(origin);
     for (int x = start_x/2*2; x >= 0; x -= 2) {
         int maxcols = COLS - x;
-        if (x <= clear_col) {
-            int y0 = sweep_all ? 0 : start_y;
-            int y1 = sweep_all ? LINES : start_y + height;
-            for (int y = y0; y < y1; y++)
-                mvprintw(y, 0, "%s", dch2);
-        }
+        CALL_COUPLERS(arriving, x);
         for (int y = 0; y < height; y++)
             mvputns(start_y + y, x, sl[y], maxcols);
+        CALL_COUPLERS(departed, x);
         fflush(stdout);
         strcat(smoke, " o");
         usleep(100000);
     }
+    CALL_COUPLERS(terminal);
 }

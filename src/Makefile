@@ -25,6 +25,19 @@ sl-1985: sl-1985.c
 		-include term.h -DCM=cursor_address \
 		-o $@ $< $(NCURSES_LIBS)
 
+# Coupler cars for sl-2026.
+# List as NAME=1 (default on) or NAME=0 (default off).
+# This auto-generates -DCAR_NAME=x flags and car-name.c source list.
+# Each car can be overridden at runtime via SL_CAR_NAME env var.
+SL2026_CARS      := SWEEP=1 NULL=0
+SL2026_CAR_FLAGS := $(addprefix -DCAR_,$(SL2026_CARS))
+SL2026_CAR_NAMES := $(foreach c,$(SL2026_CARS),$(firstword $(subst =, ,$(c))))
+SL2026_CAR_SRCS  := sl-couplers.c \
+	$(shell echo '$(SL2026_CAR_NAMES)' | tr A-Z a-z | sed 's/[^ ]*/car-&.c/g')
+
+sl-2026: sl-2026.c $(SL2026_CAR_SRCS) sl-coupler.h
+	$(CC) $(NCURSES_CFLAGS) $(SL2026_CAR_FLAGS) -o $@ sl-2026.c $(SL2026_CAR_SRCS) $(NCURSES_LIBS)
+
 %: %.c
 	$(CC) $(NCURSES_CFLAGS) -o $@ $< $(NCURSES_LIBS)
 

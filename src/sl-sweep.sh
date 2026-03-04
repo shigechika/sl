@@ -1,15 +1,15 @@
-# sl-2026-sweep.sh - Sweep area detection for sl-2026
+# sl-sweep.sh - Sweep area detection for sl-2026
 #
 # Detects existing text on the terminal screen to determine where
 # sl-2026 should begin sweeping (pushing text off via dch2).
 
-source "$(dirname "${BASH_SOURCE[0]}")/sl-screen.sh"
+. sl-screen.sh
 
 SL_HEIGHT=7
 
 # Get the sweep area: the screen region where SL runs
 get_sweep_area() {
-    get_visible_screen | tail -n "$SL_HEIGHT"
+    get_visible_screen | tail -n $((SL_HEIGHT + 1)) | head -n "$SL_HEIGHT"
 }
 
 # Calculate the column where SL should start sweeping
