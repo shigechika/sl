@@ -108,7 +108,7 @@ calc_max_display_col() {
     PERL_BADLANG=0 perl -I"$bindir/lib" -CSD -MText::VisualWidth::PP=vwidth -e '
         my $m = -1;
         while (<STDIN>) {
-            s/\s+$//;
+            s/ +$//;
             my $w = vwidth($_);
             $m = $w if $w > $m;
         }

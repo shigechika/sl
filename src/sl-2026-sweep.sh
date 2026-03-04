@@ -9,7 +9,7 @@ SL_HEIGHT=7
 
 # Get the sweep area: the screen region where SL runs
 get_sweep_area() {
-    get_visible_screen | tail -n "$SL_HEIGHT"
+    get_visible_screen | tail -n $((SL_HEIGHT + 1)) | head -n "$SL_HEIGHT"
 }
 
 # Calculate the column where SL should start sweeping
