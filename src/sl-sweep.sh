@@ -1,4 +1,4 @@
-# sl-2026-sweep.sh - Sweep area detection for sl-2026
+# sl-sweep.sh - Sweep area detection for sl-2026
 #
 # Detects existing text on the terminal screen to determine where
 # sl-2026 should begin sweeping (pushing text off via dch2).

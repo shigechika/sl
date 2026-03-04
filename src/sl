@@ -162,7 +162,7 @@ sl_2026() {
     done
     shift $((OPTIND - 1))
 
-    . sl-2026-sweep.sh
+    . sl-sweep.sh
     if ((sweep_all)); then
         export SL_SWEEP_ALL=1
     fi
@@ -200,7 +200,7 @@ sl_1985() {
 
 case "$subcmd" in
     capture|sweep-area|clear-col|debug|mark)
-        . sl-2026-sweep.sh
+        . sl-sweep.sh
         ;;
 esac
 

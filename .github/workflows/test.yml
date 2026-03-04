@@ -33,7 +33,7 @@ jobs:
         run: |
           bash -n src/sl
           bash -n src/sl-screen.sh
-          bash -n src/sl-2026-sweep.sh
+          bash -n src/sl-sweep.sh
 
       - name: Basic option tests
         working-directory: src
