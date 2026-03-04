@@ -6,10 +6,10 @@
  * 1. Create car-xxx.c with a constructor function:
  *
  *      #include "sl-coupler.h"
- *      static void xxx_origin(coupler *cpl, int COLS, int LINES) { ... }
- *      static void xxx_arriving(coupler *cpl, int COLS, int LINES, int x) { ... }
- *      static void xxx_departed(coupler *cpl, int COLS, int LINES, int x) { ... }
- *      static void xxx_terminal(coupler *cpl, int COLS, int LINES) { ... }
+ *      static void xxx_origin(coupler *cpl) { ... }
+ *      static void xxx_arriving(coupler *cpl, int x) { ... }
+ *      static void xxx_departed(coupler *cpl, int x) { ... }
+ *      static void xxx_terminal(coupler *cpl) { ... }
  *      coupler xxx_coupler(void) {
  *          return (coupler){ .arriving = xxx_arriving,
  *                            .departed = xxx_departed };
@@ -21,6 +21,7 @@
  *    - departed: called each frame after SL is drawn, before fflush (発車)
  *      - x: current SL position (decreasing from COLS toward 0)
  *    - terminal: called once after the animation loop (終着駅)
+ *    - COLS, LINES: available as globals (extern in sl-coupler.h)
  *    - Any callback may be NULL if not needed.
  *
  * 2. Declare the constructor in this header (below).
@@ -59,18 +60,24 @@ static inline void mvprintw(int y, int x, const char *fmt, const char *str) {
     printf(fmt, str);
 }
 
+extern int COLS, LINES;
+
 typedef struct coupler {
     void *ctx;
-    void (*origin)(struct coupler *cpl, int COLS, int LINES);
-    void (*arriving)(struct coupler *cpl, int COLS, int LINES, int x);
-    void (*departed)(struct coupler *cpl, int COLS, int LINES, int x);
-    void (*terminal)(struct coupler *cpl, int COLS, int LINES);
+    void (*origin)(struct coupler *cpl);
+    void (*arriving)(struct coupler *cpl, int x);
+    void (*departed)(struct coupler *cpl, int x);
+    void (*terminal)(struct coupler *cpl);
 } coupler;
 
 #define MAX_COUPLERS 8
 
 extern coupler couplers[MAX_COUPLERS];
 extern int n_couplers;
+
+#define CALL_COUPLERS(hook, ...) \
+    for (int i = 0; i < n_couplers; i++) \
+        if (couplers[i].hook) couplers[i].hook(&couplers[i], ##__VA_ARGS__)
 
 void couple(void);
 int car_enabled(const char *name, int dflt);

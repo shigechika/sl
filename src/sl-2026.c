@@ -41,6 +41,7 @@ char *sl[] = {
 
 #include "sl-coupler.h"
 
+int COLS, LINES;
 coupler couplers[MAX_COUPLERS];
 int n_couplers = 0;
 
@@ -48,24 +49,20 @@ int main() {
     couple();
 
     setupterm(NULL, STDOUT_FILENO, NULL);
-    int COLS = tigetnum("cols"), LINES = tigetnum("lines");
+    COLS = tigetnum("cols"); LINES = tigetnum("lines");
     int len = strlen(sl[0]), height = sizeof(sl)/sizeof(sl[0]);
     int start_x = COLS, start_y = LINES - height - 1;
     char smoke[1024]; strcpy(smoke, sl[0]); sl[0] = smoke;
-    for (int i = 0; i < n_couplers; i++)
-        if (couplers[i].origin) couplers[i].origin(&couplers[i], COLS, LINES);
+    CALL_COUPLERS(origin);
     for (int x = start_x/2*2; x >= 0; x -= 2) {
         int maxcols = COLS - x;
-        for (int i = 0; i < n_couplers; i++)
-            if (couplers[i].arriving) couplers[i].arriving(&couplers[i], COLS, LINES, x);
+        CALL_COUPLERS(arriving, x);
         for (int y = 0; y < height; y++)
             mvputns(start_y + y, x, sl[y], maxcols);
-        for (int i = 0; i < n_couplers; i++)
-            if (couplers[i].departed) couplers[i].departed(&couplers[i], COLS, LINES, x);
+        CALL_COUPLERS(departed, x);
         fflush(stdout);
         strcat(smoke, " o");
         usleep(100000);
     }
-    for (int i = 0; i < n_couplers; i++)
-        if (couplers[i].terminal) couplers[i].terminal(&couplers[i], COLS, LINES);
+    CALL_COUPLERS(terminal);
 }
