@@ -3,7 +3,7 @@
 # Detects existing text on the terminal screen to determine where
 # sl-2026 should begin sweeping (pushing text off via dch2).
 
-source "$(dirname "${BASH_SOURCE[0]}")/sl-screen.sh"
+. sl-screen.sh
 
 SL_HEIGHT=7
 
