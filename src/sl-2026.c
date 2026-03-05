@@ -39,7 +39,7 @@ char *sl[] = {
     "┴─O=O O=O─┴ з  \n"
 };
 
-#include "sl-coupler.h"
+#include "cars/coupler.h"
 
 int COLS, LINES;
 int sl_step = -2;

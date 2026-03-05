@@ -3,9 +3,9 @@
  *
  * HOW TO ADD A NEW CAR
  *
- * 1. Create car-xxx.c with a constructor function:
+ * 1. Create cars/xxx.c with a constructor function:
  *
- *      #include "sl-coupler.h"
+ *      #include "coupler.h"
  *      static void xxx_origin(coupler *cpl) { ... }
  *      static void xxx_arriving(coupler *cpl, int x) { ... }
  *      static void xxx_departed(coupler *cpl, int x) { ... }
@@ -21,13 +21,13 @@
  *    - departed: called each frame after SL is drawn, before fflush (発車)
  *      - x: current SL position (decreasing from COLS toward 0)
  *    - terminal: called once after the animation loop (終着駅)
- *    - COLS, LINES: available as globals (extern in sl-coupler.h)
+ *    - COLS, LINES: available as globals (extern in cars/coupler.h)
  *    - sl_step: set to 0 to stop, +2 to reverse (default -2)
  *    - Any callback may be NULL if not needed.
  *
  * 2. Declare the constructor in this header (below).
  *
- * 3. Register in sl-couplers.c under #ifdef CAR_XXX:
+ * 3. Register in cars/couplers.c under #ifdef CAR_XXX:
  *
  *      #ifdef CAR_XXX
  *          if (car_enabled("XXX", CAR_XXX))
@@ -38,7 +38,7 @@
  *
  *      SL2026_CARS := NULL=1 XXX=1
  *
- *    This auto-generates -DCAR_XXX=1 and car-xxx.c from the entry.
+ *    This auto-generates -DCAR_XXX=1 and cars/xxx.c from the entry.
  *
  * COMPILE-TIME DEFAULT
  *

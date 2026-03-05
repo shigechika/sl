@@ -1,4 +1,4 @@
-#include "sl-coupler.h"
+#include "coupler.h"
 
 coupler null_coupler(void) {
     return (coupler){ 0 };

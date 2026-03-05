@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "sl-coupler.h"
+#include "coupler.h"
 
 /* Check if car "NAME" is enabled.
    If SL_CAR_NAME is set, "0" means disabled, anything else means enabled.

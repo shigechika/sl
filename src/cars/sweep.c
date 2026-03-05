@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
-#include "sl-coupler.h"
+#include "coupler.h"
 
 typedef struct {
     char dch2[20];
