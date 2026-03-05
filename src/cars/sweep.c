@@ -9,7 +9,7 @@ typedef struct {
     int height;
 } sweep_ctx;
 
-static void sweep_origin(coupler *cpl) {
+static void origin(coupler *cpl) {
     sweep_ctx *ctx = malloc(sizeof(sweep_ctx));
     memset(ctx, 0, sizeof(*ctx));
 
@@ -26,7 +26,7 @@ static void sweep_origin(coupler *cpl) {
     cpl->ctx = ctx;
 }
 
-static void sweep_arriving(coupler *cpl, int x) {
+static void arriving(coupler *cpl, int x) {
     sweep_ctx *ctx = cpl->ctx;
     if (ctx->stop_col >= 0 && x <= ctx->stop_col) {
         sl_step = 0;
@@ -40,14 +40,14 @@ static void sweep_arriving(coupler *cpl, int x) {
         mvprintw(y, 0, "%s", ctx->dch2);
 }
 
-static void sweep_terminal(coupler *cpl) {
+static void terminal(coupler *cpl) {
     free(cpl->ctx);
 }
 
 coupler sweep_coupler(void) {
     return (coupler){
-        .origin = sweep_origin,
-        .arriving = sweep_arriving,
-        .terminal = sweep_terminal,
+        .origin = origin,
+        .arriving = arriving,
+        .terminal = terminal,
     };
 }

@@ -6,13 +6,13 @@
  * 1. Create cars/xxx.c with a constructor function:
  *
  *      #include "coupler.h"
- *      static void xxx_origin(coupler *cpl) { ... }
- *      static void xxx_arriving(coupler *cpl, int x) { ... }
- *      static void xxx_departed(coupler *cpl, int x) { ... }
- *      static void xxx_terminal(coupler *cpl) { ... }
+ *      static void origin(coupler *cpl) { ... }
+ *      static void arriving(coupler *cpl, int x) { ... }
+ *      static void departed(coupler *cpl, int x) { ... }
+ *      static void terminal(coupler *cpl) { ... }
  *      coupler xxx_coupler(void) {
- *          return (coupler){ .arriving = xxx_arriving,
- *                            .departed = xxx_departed };
+ *          return (coupler){ .arriving = arriving,
+ *                            .departed = departed };
  *      }
  *
  *    - ctx: per-instance data pointer (malloc in origin, free in terminal)
