@@ -20,4 +20,8 @@ void couple(void) {
     if (car_enabled("NULL", CAR_NULL))
         couplers[n_couplers++] = null_coupler();
 #endif
+#ifdef CAR_RAIL
+    if (car_enabled("RAIL", CAR_RAIL))
+        couplers[n_couplers++] = rail_coupler();
+#endif
 }
