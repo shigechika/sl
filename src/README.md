@@ -127,14 +127,26 @@ sweep detection mechanism.
 - **SL\_CAR\_STREAK**
 
   Control the streak effect on the bottom row (2026 only).
-  Set to **0** to disable, **rumble** for ▔/▀ thickness modulation,
-  or any other value to enable the default shimmer mode.
-  On Apple Terminal, background-colored spaces are used instead of
-  block characters to avoid ambiguous-width rendering issues.
+  Set to **0** to disable, or any other value to enable.
 
 - **SL\_STREAK**
 
-  Set the streak mode.  **rumble** for ▔/▀ thickness modulation.
+  Set the streak mode.  **rumble** for ▔/▀ thickness modulation,
+  otherwise the default shimmer mode (▔ only) is used.
+
+# TERMINAL TIPS
+
+The 2026 version uses Unicode box-drawing and block characters
+whose East Asian Width property is "Ambiguous".  Terminals that
+treat ambiguous-width characters as double-width will cause visual
+glitches (line wrapping / "derailment").  Make sure to uncheck
+this setting:
+
+- **iTerm2**: Profiles → Text → Unicode → **Ambiguous characters
+  are double-width**
+
+- **Apple Terminal**: Profiles → Advanced → **Unicode East Asian
+  Ambiguous characters are wide**
 
 # INSTALL
 
