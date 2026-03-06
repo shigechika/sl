@@ -1,5 +1,12 @@
 {{$NEXT}}
 
+v2026.4 2026-03-06
+
+    - Add -w/--sweep, -W/--no-sweep options to control sweep effect
+    - Add -S/--no-stop option to complement -s/--stop
+    - Fix pandoc converting -- to en dash in man page
+    - Add AIKAWA, Shigechika to AUTHOR section
+
 v2026.3 2026-03-06
 
     - Add streak effect on the bottom row with shimmer/rumble modes
