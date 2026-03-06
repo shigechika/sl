@@ -108,7 +108,7 @@ slowout() {
 # Argument parsing
 ##############################################################################
 
-VERSION=v2026.2
+VERSION=v2026.3
 USAGE="sl [options] [VERSION|SUBCOMMAND]"
 
 declare -A OPTS=(

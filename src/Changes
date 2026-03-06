@@ -1,5 +1,17 @@
 {{$NEXT}}
 
+v2026.3 2026-03-06
+
+    - Add streak effect on the bottom row with shimmer/rumble modes
+    - Add -t/--streak, -T/--nostreak options to control streak
+    - Add -c/--color option for truecolor/256 color mode selection
+    - Add -p/--param option for coupler parameters (e.g., STREAK=rumble,reverse)
+    - Add SIGINT handling to clean up streak line on ^C
+    - Replace getopts with getoptlong.sh for option parsing
+    - Generate help message from script header comment
+    - Add COUPLERS section to README with Sweep/Streak subsections
+    - Add TERMINAL TIPS for ambiguous-width character settings
+
 v2026.2 2026-03-05
 
     - Add -s option to stop train at text boundary
