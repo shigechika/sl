@@ -12,7 +12,6 @@ typedef struct {
     int trail_div;
     int row;
     int use_truecolor;
-    int use_bg;     /* Apple Terminal: background-colored spaces */
     int rumble;     /* ▔/▀ thickness modulation */
 } streak_ctx;
 
@@ -33,10 +32,6 @@ static void origin(coupler *cpl) {
     const char *mode = sl_option("STREAK");
     ctx->rumble = mode && strcmp(mode, "rumble") == 0;
 
-    const char *tp = getenv("TERM_PROGRAM");
-    int apple_terminal = tp && strcmp(tp, "Apple_Terminal") == 0;
-    ctx->use_bg = apple_terminal;
-
     cpl->ctx = ctx;
 }
 
@@ -44,7 +39,7 @@ static void origin(coupler *cpl) {
    Asymmetric gradient: sharp leading edge, long trailing tail.
    Two modes: "shimmer" (thin ▔ only, default) and
    "rumble" (▔/▀ thickness modulation via SL_STREAK=rumble).
-   Apple Terminal: background-colored spaces (▔/▀ are ambiguous-width).
+   Requires "Ambiguous characters are wide" to be Off in terminal settings.
    Falls back to 256-color when COLORTERM is not truecolor/24bit. */
 static void departed(coupler *cpl, int x) {
     streak_ctx *ctx = cpl->ctx;
@@ -78,26 +73,21 @@ static void departed(coupler *cpl, int x) {
             r = 15 + 240 * v / 255;
             g = 12 + 208 * v / 255;
             b = 10 + 190 * v / 255;
-            bi = (ctx->rumble && !ctx->use_bg) ? v % 2 : 0;
+            bi = ctx->rumble ? v % 2 : 0;
         }
         if (r != pr || g != pg || b != pb) {
             if (ctx->use_truecolor)
-                printf(ctx->use_bg ? "\033[48;2;%d;%d;%dm"
-                                   : "\033[38;2;%d;%d;%dm", r, g, b);
+                printf("\033[38;2;%d;%d;%dm", r, g, b);
             else {
                 int ci = 16
                     + 36 * (r < 48 ? 0 : r < 115 ? 1 : (r - 35) / 40)
                     +  6 * (g < 48 ? 0 : g < 115 ? 1 : (g - 35) / 40)
                     +      (b < 48 ? 0 : b < 115 ? 1 : (b - 35) / 40);
-                printf(ctx->use_bg ? "\033[48;5;%dm"
-                                   : "\033[38;5;%dm", ci);
+                printf("\033[38;5;%dm", ci);
             }
             pr = r; pg = g; pb = b;
         }
-        if (ctx->use_bg)
-            putchar(' ');
-        else
-            fputs(blocks[bi], stdout);
+        fputs(blocks[bi], stdout);
     }
     printf("\033[0m");
 
