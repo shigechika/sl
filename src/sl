@@ -82,7 +82,7 @@ resolve_latest() {
             return
         fi
     done
-    echo 2023
+    error "no sl binary found; run 'make' first?"
 }
 
 # Output filter for sl-1985: add per-character delay for retro feel.
@@ -153,7 +153,7 @@ case "$subcmd" in
         shift
         ;;
     *)
-        version=$(resolve_latest)
+        version=$(resolve_latest) || exit 1
         ;;
 esac
 
