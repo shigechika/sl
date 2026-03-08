@@ -54,14 +54,21 @@ int main() {
 
     setupterm(NULL, STDOUT_FILENO, NULL);
     COLS = tigetnum("cols"); LINES = tigetnum("lines");
-    int len = strlen(sl[0]), height = sizeof(sl)/sizeof(sl[0]);
-    int start_x = (COLS + 1) & ~1, start_y = LINES - height - 1;
+    int height = sizeof(sl)/sizeof(sl[0]);
+    int start_y = LINES - height - 1;
+    int clear_col = sl_option_int("SWEEP_COL", 0);
+    int stop_col = sl_option_int("STOP_COL", -1);
+    int ref_col = (stop_col >= 0) ? stop_col : clear_col;
+    /* Align start_x parity with ref_col so the train lands exactly on it */
+    int start_x = COLS | 1;  /* start beyond right edge (odd) */
+    if ((start_x & 1) != (ref_col & 1))
+        start_x++;
     char smoke[1024]; strcpy(smoke, sl[0]); sl[0] = smoke;
     sl_noecho();
     signal(SIGINT, on_sigint);
     CALL_COUPLERS(origin);
     int frames = 0;
-    for (int x = start_x/2*2; x >= 0 && sl_step && !interrupted; x += sl_step) {
+    for (int x = start_x; x >= 0 && sl_step && !interrupted; x += sl_step) {
         int maxcols = COLS - x;
         CALL_COUPLERS(arriving, x);
         if (!sl_step && frames == 0) {

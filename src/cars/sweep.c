@@ -32,7 +32,7 @@ static void arriving(coupler *cpl, int x) {
         sl_step = 0;
         return;
     }
-    if (x > ctx->clear_col) return;
+    if (x >= ctx->clear_col) return;
 
     int y0 = ctx->sweep_all ? 0 : ctx->start_y;
     int y1 = ctx->sweep_all ? LINES : ctx->start_y + ctx->height;

@@ -25,10 +25,10 @@ draw_column_marker() {
     ((start_y < 0)) && return 1
     ((col < 0)) && return 0
 
-    local c=$((col + 2))
+    local c=$((col + 1))
     local row
     for ((row = 0; row < SL_HEIGHT; row++)); do
-        mvprintf "$((start_y + row + 1))" "$c" "|"
+        mvprintf "$((start_y + row + 1))" "$c" "<"
     done
     mvprintf "$TERM_LINES" 1 ""
 }
