@@ -1,5 +1,14 @@
 {{$NEXT}}
 
+v2026.5 2026-03-08
+
+    - Add animation abstraction layer with pluggable art modules
+    - Add clawd animation (Claude Code mascot with spinner and hat variants)
+    - Add -A/--art option and art-list subcommand for animation selection
+    - Add SL_QUERY mechanism for shell/C binary art info exchange
+    - Remove hardcoded art height from sweep coupler
+    - Fix error message when no sl binary is found
+
 v2026.4.1 2026-03-08
 
     - Fix sweep/stop column off-by-one from missing chomp in width calc
