@@ -9,6 +9,7 @@
 #   -a, --all            Sweep the entire screen (2026)
 #   -s/-S, --stop/--no-stop    Stop/don't stop at text (2026)
 #   -t/-T, --streak/--no-streak  Enable/disable streak (2026, default: on)
+#   -A, --art=NAME       Animation art (2026, default: sl)
 #   -c, --color=MODE     Color mode: truecolor/24bit/256
 #   -p, --param=K=V      Set coupler parameter (e.g., STREAK=rumble)
 #   -d, --debug          Show debug info on the last line before running
@@ -126,6 +127,7 @@ declare -A OPTS=(
     [   nostop | S  !  # disable stop           ]=
     [   streak | t     # enable streak (2026)   ]=1
     [ nostreak | T  !  # disable streak         ]=
+    [      art | A  :  # animation art (2026)    ]=
     [    color | c  :  # color mode             ]=
     [    param | p  %  # coupler parameter      ]=
 )
@@ -190,6 +192,9 @@ sl_2026() {
         for _m in "${_modes[@]}"; do
             export "SL_STREAK_${_m^^}=1"
         done
+    fi
+    if [[ $art ]]; then
+        export SL_ART=$art
     fi
     if [[ $color ]]; then
         case $color in

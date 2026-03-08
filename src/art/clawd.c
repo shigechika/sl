@@ -1,0 +1,99 @@
+/*
+ * art/clawd.c - Claude Code mascot animation
+ *
+ * The mascot from Claude Code's startup screen, running across
+ * the terminal with a spinner above its head cycling through
+ * · ✢ ✳ ✶ ✻ ✽ (same as Claude Code's thinking indicator).
+ *
+ * Hat variants can be enabled via SL_HAT environment variable.
+ */
+
+#include "art.h"
+#include "../sl.h"
+
+/* Spinner cycle: blank → grow → peak → shrink → blank → ... */
+static const char *sparkle_cycle[] = {
+    " ", "·", "✳", "✶", "✢", "✻", "✽", "✻", "✢", "✶", "✳", "·"
+};
+#define N_SPARKLE_CYCLE (sizeof(sparkle_cycle)/sizeof(sparkle_cycle[0]))
+
+#define CLAWD_HEIGHT 6  /* spinner + hat(2) + head + body + legs */
+#define SPINNER_BUF 32
+
+/* Hat variants: 2-line arrays (stick + brim) */
+#define HAT_LINES 2
+
+typedef struct {
+    const char *name;
+    const char *art[HAT_LINES];
+} hat_def;
+
+static const hat_def hats[] = {
+    { "none",  { "  ", "  " } },
+    { "party", { "    |  ",
+                 "   ▟█▙  " } },
+};
+
+static const char *clawd_art[] = {
+    " ▐▛███▜▌          ",   /* head */
+    "▝▜█████▛▘         ",   /* body */
+};
+#define CLAWD_ART_LINES (sizeof(clawd_art)/sizeof(clawd_art[0]))
+
+static const char *legs[] = {
+    " ▝▝   ▘▘          ",   /* closed */
+    "  ▘▘ ▝▝           ",   /* open */
+};
+
+typedef struct {
+    char spinner[SPINNER_BUF];
+    const hat_def *hat;
+} clawd_ctx;
+
+static const hat_def *find_hat(const char *name) {
+    if (name && *name) {
+        for (int i = 0; i < (int)(sizeof(hats)/sizeof(hats[0])); i++)
+            if (strcmp(hats[i].name, name) == 0)
+                return &hats[i];
+    }
+    return &hats[0];  /* none */
+}
+
+static void clawd_init(animation *a) {
+    clawd_ctx *c = calloc(1, sizeof(clawd_ctx));
+    a->ctx = c;
+    const char *hat_name = sl_option("HAT");
+    if (!hat_name && arc4random_uniform(20) == 0)
+        hat_name = "party";
+    c->hat = find_hat(hat_name);
+}
+
+static void clawd_draw(animation *a, int tick) {
+    clawd_ctx *c = a->ctx;
+    int row = 0;
+
+    /* Row 0: single spinner character above hat center (col 4) */
+    const char *ch = sparkle_cycle[tick % N_SPARKLE_CYCLE];
+    snprintf(c->spinner, SPINNER_BUF, "    %s             ", ch);
+
+    art_goto(row++); art_puts(c->spinner);
+    art_goto(row++); art_puts(c->hat->art[0]);
+    art_goto(row++); art_puts(c->hat->art[1]);
+    for (int i = 0; i < CLAWD_ART_LINES; i++)
+        { art_goto(row++); art_puts(clawd_art[i]); }
+    art_goto(row++); art_puts(legs[(tick / 5) & 1]);
+}
+
+static void clawd_cleanup(animation *a) {
+    free(a->ctx);
+    a->ctx = NULL;
+}
+
+animation clawd_animation = {
+    .name    = "clawd",
+    .height  = CLAWD_HEIGHT,
+    .width   = 11,  /* 9 (body) + 2 (step) */
+    .init    = clawd_init,
+    .draw    = clawd_draw,
+    .cleanup = clawd_cleanup,
+};
