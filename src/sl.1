@@ -46,6 +46,12 @@ Dry run.
 Show debug information and exit without running the train.
 .SH OPTIONS (2026 only)
 .TP
+\f[B]\-A\f[R], \f[B]\-\-art\f[R]=\f[I]NAME\f[R]
+Select animation art.
+Use \f[B]\-A?\f[R] or the \f[B]art\-list\f[R] subcommand to list
+available animations.
+Default: \f[B]sl\f[R].
+.TP
 \f[B]\-c\f[R], \f[B]\-\-color\f[R]=\f[I]MODE\f[R]
 Set color mode: \f[B]truecolor\f[R], \f[B]24bit\f[R], or \f[B]256\f[R].
 .TP
@@ -93,11 +99,14 @@ text.
 These subcommands are primarily for debugging the screen capture and
 sweep detection mechanism.
 .TP
+\f[B]art\-list\f[R]
+List available animations with their properties (name, height).
+.TP
 \f[B]capture\f[R]
 Dump the captured visible screen text to stdout.
 .TP
 \f[B]sweep\-area\f[R]
-Show the 7\-line area where the train runs.
+Show the area where the train runs.
 .TP
 \f[B]clear\-col\f[R]
 Print the column number where sweeping should start.

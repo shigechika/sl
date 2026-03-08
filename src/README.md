@@ -47,6 +47,11 @@ On unsupported terminals or platforms, the train always sweeps
 
 # OPTIONS (2026 only)
 
+- **-A**, **--art**=*NAME*
+
+  Select animation art.  Use **-A?** or the **art-list** subcommand
+  to list available animations.  Default: **sl**.
+
 - **-c**, **--color**=*MODE*
 
   Set color mode: **truecolor**, **24bit**, or **256**.
@@ -108,13 +113,17 @@ On unsupported terminals or platforms, the train always sweeps
 These subcommands are primarily for debugging the screen capture and
 sweep detection mechanism.
 
+- **art-list**
+
+  List available animations with their properties (name, height).
+
 - **capture**
 
   Dump the captured visible screen text to stdout.
 
 - **sweep-area**
 
-  Show the 7-line area where the train runs.
+  Show the area where the train runs.
 
 - **clear-col**
 

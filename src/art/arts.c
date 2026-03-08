@@ -8,7 +8,7 @@
 extern animation sl_animation;
 extern animation clawd_animation;
 
-static animation *animations[] = {
+animation *animations[] = {
     &sl_animation,
     &clawd_animation,
     NULL

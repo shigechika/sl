@@ -20,7 +20,7 @@ static void origin(coupler *cpl) {
     ctx->clear_col = sl_option_int("SWEEP_COL", 0);
     ctx->stop_col = sl_option_int("STOP_COL", -1);
     ctx->sweep_all = sl_option_bool("SWEEP_ALL");
-    ctx->height = 7;  /* SL art height */
+    ctx->height = sl_art_height;
     ctx->start_y = LINES - ctx->height - 1;
 
     cpl->ctx = ctx;

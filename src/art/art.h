@@ -12,7 +12,6 @@
 typedef struct animation {
     const char *name;
     int height;
-    int width;     /* display columns to pad each line to */
     void *ctx;
     void (*init)(struct animation *a);
     void (*draw)(struct animation *a, int tick);
@@ -25,6 +24,7 @@ void art_goto(int row);
 void art_puts(const char *s);
 
 /* Animation registry */
+extern animation *animations[];
 animation *get_animation(const char *name);
 
 #endif

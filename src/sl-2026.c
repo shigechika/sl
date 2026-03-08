@@ -10,7 +10,7 @@
 #include "art/art.h"
 
 /* Drawing API state — set by art_set_pos before each frame */
-static int art_start_y, art_x, art_maxcols, art_width;
+static int art_start_y, art_x, art_maxcols;
 
 void art_set_pos(int start_y, int x, int maxcols) {
     art_start_y = start_y;
@@ -22,8 +22,7 @@ void art_goto(int row) {
     tputs(tparm(tgoto(cursor_address, art_x, art_start_y + row)), 1, putchar);
 }
 
-/* Output string clipped to art_maxcols display columns,
-   then pad with spaces to art_width.
+/* Output string clipped to art_maxcols display columns.
    All SL art characters are single-width, so 1 codepoint = 1 column. */
 void art_puts(const char *s) {
     int n = art_maxcols;
@@ -37,14 +36,13 @@ void art_puts(const char *s) {
         s += bytes;
         col++;
     }
-    int pad = art_width < n ? art_width : n;
-    while (col < pad) { putchar(' '); col++; }
 }
 
 #include "cars/coupler.h"
 
 int COLS, LINES;
 int sl_step = -2;
+int sl_art_height;
 coupler couplers[MAX_COUPLERS];
 int n_couplers = 0;
 
@@ -55,16 +53,23 @@ static void on_sigint(int sig) {
 }
 
 int main() {
+    if (sl_option("QUERY")) {
+        for (int i = 0; animations[i]; i++) {
+            animation *a = animations[i];
+            printf("[%s.height]=%d\n", a->name, a->height);
+        }
+        return 0;
+    }
+    animation *anim = get_animation(sl_option("ART"));
+
     couple();
 
     setupterm(NULL, STDOUT_FILENO, NULL);
     COLS = tigetnum("cols"); LINES = tigetnum("lines");
-
-    animation *anim = get_animation(sl_option("ART"));
     anim->init(anim);
 
-    int start_y = LINES - anim->height - 1;
-    art_width = anim->width;
+    sl_art_height = anim->height;
+    int start_y = LINES - sl_art_height - 1;
     /* Start just beyond right edge, even so x always reaches 0 */
     int start_x = (COLS + 1) & ~1;
     sl_noecho();

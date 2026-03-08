@@ -5,7 +5,7 @@
 
 . sl-screen.sh
 
-SL_HEIGHT=7
+: "${SL_HEIGHT:=7}"
 
 # Get the sweep area: the screen region where SL runs
 get_sweep_area() {

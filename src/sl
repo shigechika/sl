@@ -9,7 +9,7 @@
 #   -a, --all            Sweep the entire screen (2026)
 #   -s/-S, --stop/--no-stop    Stop/don't stop at text (2026)
 #   -t/-T, --streak/--no-streak  Enable/disable streak (2026, default: on)
-#   -A, --art=NAME       Animation art (2026, default: sl)
+#   -A, --art=NAME       Animation art (2026, default: sl, "?" to list)
 #   -c, --color=MODE     Color mode: truecolor/24bit/256
 #   -p, --param=K=V      Set coupler parameter (e.g., STREAK=rumble)
 #   -d, --debug          Show debug info on the last line before running
@@ -18,8 +18,9 @@
 #       --version        Show version
 #
 # Subcommands:
+#   art-list    List available animations with their properties
 #   capture     Dump captured screen text
-#   sweep-area  Show the 7-line area where SL runs
+#   sweep-area  Show the area where SL runs
 #   clear-col   Print the column where sweeping should start
 #   debug       Show detailed sweep area analysis
 #   mark        Draw a visual marker at the sweep start column
@@ -63,6 +64,14 @@ version() { echo "$VERSION"; exit 0; }
 nosweep()  { [[ $2 ]] && sweep=  || sweep=1;  }
 nostop()   { [[ $2 ]] && stop=   || stop=1;   }
 nostreak() { [[ $2 ]] && streak= || streak=1; }
+
+# Load sweep support: export SL_ART, query art info, source sl-sweep.sh
+load_sweep() {
+    [[ $art ]] && export SL_ART=$art
+    eval "declare -A SL_ART_INFO=($(SL_QUERY=list sl-${version:-2026} 2>/dev/null))"
+    SL_HEIGHT=${SL_ART_INFO[${art:-sl}.height]:-}
+    . sl-sweep.sh
+}
 
 # Find the latest available version
 resolve_latest() {
@@ -140,7 +149,7 @@ case "$subcmd" in
         version=$subcmd
         shift
         ;;
-    capture|clear-col|debug|mark|sweep-area)
+    art-list|capture|clear-col|debug|mark|sweep-area)
         shift
         ;;
     *)
@@ -154,7 +163,7 @@ esac
 
 # Run sl-2026 with sweep detection.
 sl_2026() {
-    . sl-sweep.sh
+    load_sweep
     if [[ $all ]]; then
         export SL_SWEEP_ALL=1
     fi
@@ -193,9 +202,6 @@ sl_2026() {
             export "SL_STREAK_${_m^^}=1"
         done
     fi
-    if [[ $art ]]; then
-        export SL_ART=$art
-    fi
     if [[ $color ]]; then
         case $color in
             truecolor|24bit) export COLORTERM=truecolor ;;
@@ -222,7 +228,7 @@ sl_1985() {
 
 case "$subcmd" in
     capture|sweep-area|clear-col|debug|mark)
-        . sl-sweep.sh
+        load_sweep
         ;;
 esac
 
@@ -250,7 +256,24 @@ case "$subcmd" in
         printf '%s\n' "$clear_col"
         exit 0
         ;;
+    art-list)
+        art='?'
+        ;;
 esac
+
+##############################################################################
+# Art list (-A? / art-list)
+##############################################################################
+
+if [[ $art == '?' ]]; then
+    eval "declare -A _ai=($(SL_QUERY=list sl-${version:-2026} 2>/dev/null))"
+    printf "%-12s %s\n" "NAME" "HEIGHT"
+    for _k in "${!_ai[@]}"; do
+        _name=${_k%%.*} _prop=${_k#*.}
+        [[ $_prop == height ]] && printf "%-12s %s\n" "$_name" "${_ai[$_k]}"
+    done | sort
+    exit 0
+fi
 
 ##############################################################################
 # Run the selected version

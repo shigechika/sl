@@ -14,6 +14,7 @@
 
 extern int COLS, LINES;
 extern int sl_step;
+extern int sl_art_height;
 
 /* Look up option SL_<name>.  Currently from environment;
    may later support command-line options too.

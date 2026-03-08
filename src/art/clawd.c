@@ -29,20 +29,20 @@ typedef struct {
 } hat_def;
 
 static const hat_def hats[] = {
-    { "none",  { "  ", "  " } },
-    { "party", { "    |  ",
-                 "   ▟█▙  " } },
+    { "none",  { "", "" } },
+    { "party", { "    |",
+                 "   ▟█▙" } },
 };
 
 static const char *clawd_art[] = {
-    " ▐▛███▜▌          ",   /* head */
-    "▝▜█████▛▘         ",   /* body */
+    " ▐▛███▜▌",   /* head */
+    "▝▜█████▛▘",   /* body */
 };
 #define CLAWD_ART_LINES (sizeof(clawd_art)/sizeof(clawd_art[0]))
 
 static const char *legs[] = {
-    " ▝▝   ▘▘          ",   /* closed */
-    "  ▘▘ ▝▝           ",   /* open */
+    " ▝▝   ▘▘",   /* closed */
+    "  ▘▘ ▝▝",   /* open */
 };
 
 typedef struct {
@@ -74,14 +74,14 @@ static void clawd_draw(animation *a, int tick) {
 
     /* Row 0: single spinner character above hat center (col 4) */
     const char *ch = sparkle_cycle[tick % N_SPARKLE_CYCLE];
-    snprintf(c->spinner, SPINNER_BUF, "    %s             ", ch);
+    snprintf(c->spinner, SPINNER_BUF, "    %s", ch);
 
-    art_goto(row++); art_puts(c->spinner);
-    art_goto(row++); art_puts(c->hat->art[0]);
-    art_goto(row++); art_puts(c->hat->art[1]);
+    art_goto(row++); art_puts(c->spinner); tputs(clr_eol, 1, putchar);
+    art_goto(row++); art_puts(c->hat->art[0]); tputs(clr_eol, 1, putchar);
+    art_goto(row++); art_puts(c->hat->art[1]); tputs(clr_eol, 1, putchar);
     for (int i = 0; i < CLAWD_ART_LINES; i++)
-        { art_goto(row++); art_puts(clawd_art[i]); }
-    art_goto(row++); art_puts(legs[(tick / 5) & 1]);
+        { art_goto(row++); art_puts(clawd_art[i]); tputs(clr_eol, 1, putchar); }
+    art_goto(row++); art_puts(legs[(tick / 5) & 1]); tputs(clr_eol, 1, putchar);
 }
 
 static void clawd_cleanup(animation *a) {
@@ -92,7 +92,6 @@ static void clawd_cleanup(animation *a) {
 animation clawd_animation = {
     .name    = "clawd",
     .height  = CLAWD_HEIGHT,
-    .width   = 11,  /* 9 (body) + 2 (step) */
     .init    = clawd_init,
     .draw    = clawd_draw,
     .cleanup = clawd_cleanup,
