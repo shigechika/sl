@@ -1,5 +1,11 @@
 {{$NEXT}}
 
+v2026.4.1 2026-03-08
+
+    - Fix sweep/stop column off-by-one from missing chomp in width calc
+    - Align train start position parity with clear_col for exact landing
+    - Fix 2-column gap on first sweep frame
+
 v2026.4 2026-03-06
 
     - Add -w/--sweep, -W/--no-sweep options to control sweep effect
