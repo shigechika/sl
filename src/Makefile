@@ -9,6 +9,7 @@ CURRENT := $(shell git -C .. describe --tags --abbrev=0 2>/dev/null)
 YEAR    := $(shell date +%Y)
 DATE    := $(shell date +%Y-%m-%d)
 MAKE    := $(MAKE) --no-print-directory
+CONFIRM ?= 1
 
 .ONESHELL:
 .PHONY: all build check check-changes release clean
@@ -89,7 +90,7 @@ release:
 	echo "$$msg"
 	echo "---"
 	$(GIT) --no-pager diff --cached --stat
-	read -p "Commit and tag $(VERSION)? [y/N] " ans
+	if [ -n "$(CONFIRM)" ]; then read -p "Commit and tag $(VERSION)? [y/N] " ans; else ans=y; fi
 	[ "$$ans" = y ] || { echo "Aborted"; exit 1; }
 	$(GIT) commit -m "$$msg"
 	$(GIT) tag $(VERSION)
