@@ -1,5 +1,10 @@
 {{$NEXT}}
 
+v2026.5.2 2026-03-09
+
+    - Add per-animation step and frame delay support
+    - clawd: smoother 1-column movement, pose animation with arm/leg coordination
+
 v2026.5.1 2026-03-08
 
     - Rename -a/--all to -C/--clear, -A/--art to -a/--art
