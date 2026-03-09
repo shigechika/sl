@@ -58,12 +58,8 @@ PATH=$bindir:$PATH
 warn()  { echo "sl: $*" >&2; }
 error() { warn "$@"; exit 1; }
 
-# Callback functions for getoptlong
 help()    { sed -n '3,/^$/{ s/^# \{0,1\}//; p; }' "$self"; exit 0; }
 version() { echo "$VERSION"; exit 0; }
-nosweep()  { [[ $2 ]] && sweep=  || sweep=1;  }
-nostop()   { [[ $2 ]] && stop=   || stop=1;   }
-nostreak() { [[ $2 ]] && streak= || streak=1; }
 
 # Load sweep support: export SL_ART, query art info, source sl-sweep.sh
 load_sweep() {
@@ -124,21 +120,18 @@ VERSION=v2026.5.2
 USAGE="sl [options] [VERSION|SUBCOMMAND]"
 
 declare -A OPTS=(
-    [&USAGE]="$USAGE" [&DELIM]=
-    [     help | h  !  # show help             ]=
-    [  version |    !  # show version           ]=
-    [    debug | d     # debug mode             ]=
-    [   dryrun | n     # dry-run mode           ]=
-    [    sweep | w     # enable sweep (2026)    ]=1
-    [  nosweep | W  !  # disable sweep          ]=
-    [    clear | C     # sweep all (2026)       ]=
-    [     stop | s     # stop at text           ]=
-    [   nostop | S  !  # disable stop           ]=
-    [   streak | t     # enable streak (2026)   ]=1
-    [ nostreak | T  !  # disable streak         ]=
-    [      art | a  :  # animation art (2026)    ]=
-    [    color | c  :  # color mode             ]=
-    [    param | p  %  # coupler parameter      ]=
+    [&REQUIRE]=0.8.0 [&USAGE]="$USAGE" [&DELIM]=
+    [     help | h  ! # show help            ]=
+    [  version |    ! # show version         ]=
+    [    debug | d    # debug mode           ]=
+    [   dryrun | n    # dry-run mode         ]=
+    [    sweep | w ~W # enable sweep (2026)  ]=1
+    [    clear | C    # sweep all (2026)     ]=
+    [     stop | s ~S # stop at text         ]=
+    [   streak | t ~T # enable streak (2026) ]=1
+    [      art | a  : # animation art (2026) ]=
+    [    color | c  : # color mode           ]=
+    [    param | p  % # coupler parameter    ]=
 )
 
 . getoptlong.sh OPTS "$@"
