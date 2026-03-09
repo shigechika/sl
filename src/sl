@@ -26,6 +26,9 @@
 #   mark        Draw a visual marker at the sweep start column
 #
 # Versions:
+#   modern      Toyoda Masashi's SL (mtoyoda/sl)
+#   d51         D51 locomotive (modern)
+#   c51         C51 locomotive (modern -c)
 #   2023        Unicode art version, always sweeps
 #   2010        Direct terminal control version
 #   1985        Original curses version with retro delay
@@ -138,7 +141,7 @@ declare -A OPTS=(
 
 subcmd=${1:-}
 case "$subcmd" in
-    2026|2023|2010|1985)
+    modern|d51|c51|2026|2023|2010|1985)
         version=$subcmd
         shift
         ;;
@@ -268,6 +271,10 @@ if [[ $art == '?' ]]; then
     done | sort
     exit 0
 fi
+
+# Run sl-modern variants (d51, c51).
+sl_d51() { exec sl-modern "$@"; }
+sl_c51() { exec sl-modern -c "$@"; }
 
 ##############################################################################
 # Run the selected version

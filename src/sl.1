@@ -93,6 +93,18 @@ exit)
 .PD 0
 .P
 .PD
+\f[B]modern\f[R] \(em Toyoda Masashi\(aqs SL (mtoyoda/sl)
+.PD 0
+.P
+.PD
+\f[B]d51\f[R] \(em D51 locomotive (modern)
+.PD 0
+.P
+.PD
+\f[B]c51\f[R] \(em C51 locomotive (modern \-c)
+.PD 0
+.P
+.PD
 \f[B]2023\f[R] \(em Unicode art version, always sweeps
 .PD 0
 .P
@@ -108,8 +120,9 @@ binaries.
 When you mistype \f[B]ls\f[R], an SL runs across your terminal as a
 gentle punishment.
 .PP
-Four versions are available: \f[B]1985\f[R] (the original),
-\f[B]2010\f[R], \f[B]2023\f[R], and \f[B]2026\f[R].
+Five versions are available: \f[B]1985\f[R] (the original),
+\f[B]2010\f[R], \f[B]2023\f[R], \f[B]2026\f[R], and \f[B]modern\f[R]
+(Toyoda Masashi\(aqs SL).
 Without a version argument, the latest available version is selected
 automatically.
 .PP
@@ -192,6 +205,18 @@ Screen\-aware version.
 Detects text on the terminal and sweeps only when the train reaches it.
 Enters from beyond the right edge of the screen to preserve right\-side
 text.
+.TP
+\f[B]modern\f[R]
+Toyoda Masashi\(aqs SL (\c
+.UR https://github.com/mtoyoda/sl
+mtoyoda/sl
+.UE \c
+).
+Supports \f[B]\-a\f[R] (accident), \f[B]\-F\f[R] (fly), \f[B]\-l\f[R]
+(logo), and \f[B]\-c\f[R] (C51) options.
+Use \f[B]d51\f[R] or \f[B]c51\f[R] as version shortcuts.
+Pass mtoyoda options after \f[B]\-\-\f[R] (e.g., \f[B]sl modern \-\- \-a
+\-F\f[R]).
 .SH ANIMATIONS
 The 2026 version supports pluggable animation modules selected with the
 \f[B]\-a\f[R] option or \f[B]SL_ART\f[R] environment variable.

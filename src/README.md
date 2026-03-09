@@ -28,6 +28,9 @@ sl - sl runs across your terminal
 **mark** — Draw a visual marker at the sweep start column
 
 **Versions:**\
+**modern** — Toyoda Masashi's SL (mtoyoda/sl)\
+**d51** — D51 locomotive (modern)\
+**c51** — C51 locomotive (modern -c)\
 **2023** — Unicode art version, always sweeps\
 **2010** — Direct terminal control version\
 **1985** — Original curses version with retro delay
@@ -38,9 +41,9 @@ sl - sl runs across your terminal
 binaries.  When you mistype **ls**, an SL runs across your
 terminal as a gentle punishment.
 
-Four versions are available: **1985** (the original), **2010**, **2023**,
-and **2026**.  Without a version argument, the latest available version
-is selected automatically.
+Five versions are available: **1985** (the original), **2010**, **2023**,
+**2026**, and **modern** (Toyoda Masashi's SL).  Without a version
+argument, the latest available version is selected automatically.
 
 The **2026** version detects existing text on the terminal screen and
 begins sweeping (pushing text off via the **dch** terminal capability)
@@ -134,6 +137,13 @@ On unsupported terminals or platforms, the train always sweeps
   Screen-aware version.  Detects text on the terminal and sweeps only
   when the train reaches it.  Enters from beyond the right edge of the
   screen to preserve right-side text.
+
+- **modern**
+
+  Toyoda Masashi's SL ([mtoyoda/sl](https://github.com/mtoyoda/sl)).
+  Supports **-a** (accident), **-F** (fly), **-l** (logo), and **-c**
+  (C51) options.  Use **d51** or **c51** as version shortcuts.
+  Pass mtoyoda options after **--** (e.g., **sl modern \-\- -a -F**).
 
 # ANIMATIONS
 
