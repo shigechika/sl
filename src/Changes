@@ -1,5 +1,9 @@
 {{$NEXT}}
 
+v2026.7.1 2026-03-10
+
+    - Support random and weighted art selection (-a random, -a sl,sl,clawd)
+
 v2026.7 2026-03-10
 
     - Add run-off support: -g/--gone option to let the train exit the screen
