@@ -4,14 +4,15 @@ sl - sl runs across your terminal
 
 # SYNOPSIS
 
-**sl** \[**-wWsStTdn**] \[**-a** *name*] \[**-C**] \[**-c** *mode*] \[**-p** *K=V*] \[*VERSION*|*SUBCOMMAND*]
+**sl** \[*VERSION*] \[**-wWsStTdnl**] \[**-a** *name*] \[**-C**] \[**-c** *mode*] \[**-p** *K=V*] \[*SUBCOMMAND*]
 
 **Options:**\
 **-w**/**-W**, **--sweep**/**--no-sweep** — Enable/disable sweep (2026, default: on)\
 **-C**, **--clear** — Sweep the entire screen (2026)\
 **-s**/**-S**, **--stop**/**--no-stop** — Stop/don't stop at text (2026)\
 **-t**/**-T**, **--streak**/**--no-streak** — Enable/disable streak (2026, default: on)\
-**-a**, **--art**=*NAME* — Animation art (2026, default: sl, "?" to list)\
+**-a**, **--art**=*NAME* — Animation art (2026, default: sl)\
+**-l**, **--list** — List available animations\
 **-c**, **--color**=*MODE* — Color mode: truecolor/24bit/256\
 **-p**, **--param**=*K=V* — Set coupler parameter (e.g., STREAK=rumble)\
 **-d**, **--debug** — Show debug info on the last line before running\
@@ -20,17 +21,14 @@ sl - sl runs across your terminal
 **--version** — Show version
 
 **Subcommands:**\
-**art-list** — List available animations with their properties\
 **capture** — Dump captured screen text\
 **sweep-area** — Show the area where SL runs\
 **clear-col** — Print the column where sweeping should start\
 **debug** — Show detailed sweep area analysis\
 **mark** — Draw a visual marker at the sweep start column
 
-**Versions:**\
+**Versions** (must be the first argument)**:**\
 **modern** — Toyoda Masashi's SL (mtoyoda/sl)\
-**d51** — D51 locomotive (modern)\
-**c51** — C51 locomotive (modern -c)\
 **2023** — Unicode art version, always sweeps\
 **2010** — Direct terminal control version\
 **1985** — Original curses version with retro delay
@@ -42,8 +40,8 @@ binaries.  When you mistype **ls**, an SL runs across your
 terminal as a gentle punishment.
 
 Five versions are available: **1985** (the original), **2010**, **2023**,
-**2026**, and **modern** (Toyoda Masashi's SL).  Without a version
-argument, the latest available version is selected automatically.
+**2026**, and **modern** (Toyoda Masashi's SL).  The version must be
+specified as the first argument; without it, **2026** is used.
 
 The **2026** version detects existing text on the terminal screen and
 begins sweeping (pushing text off via the **dch** terminal capability)
@@ -78,9 +76,13 @@ On unsupported terminals or platforms, the train always sweeps
 
 - **-a**, **--art**=*NAME*
 
-  Select animation art.  Use **-a?** or the **art-list** subcommand
-  to list available animations.  Default: **sl**.
+  Select animation art.  Use **-l** to list available animations.
+  Default: **sl**.
   Can also be set via the **SL\_ART** environment variable.
+
+- **-l**, **--list**
+
+  List available animations with their properties (name, height, step).
 
 - **-c**, **--color**=*MODE*
 
@@ -142,14 +144,13 @@ On unsupported terminals or platforms, the train always sweeps
 
   Toyoda Masashi's SL ([mtoyoda/sl](https://github.com/mtoyoda/sl)).
   Supports **-a** (accident), **-F** (fly), **-l** (logo), and **-c**
-  (C51) options.  Use **d51** or **c51** as version shortcuts.
-  Pass mtoyoda options after **--** (e.g., **sl modern \-\- -a -F**).
+  (C51) options (e.g., **sl modern -F -a**).
 
 # ANIMATIONS
 
 The 2026 version supports pluggable animation modules selected with
 the **-a** option or **SL\_ART** environment variable.
-Use **-a?** or **art-list** to list available animations.
+Use **-l** to list available animations.
 
 Each animation defines its own movement step (columns per frame) and
 frame delay, allowing different animations to move at different speeds.
@@ -173,10 +174,6 @@ Moves 1 column per frame for smoother motion.
 
 These subcommands are primarily for debugging the screen capture and
 sweep detection mechanism.
-
-- **art-list**
-
-  List available animations with their properties (name, height, step).
 
 - **capture**
 

@@ -4,9 +4,9 @@
 .SH NAME
 sl \- sl runs across your terminal
 .SH SYNOPSIS
-\f[B]sl\f[R] [\f[B]\-wWsStTdn\f[R]] [\f[B]\-a\f[R] \f[I]name\f[R]]
-[\f[B]\-C\f[R]] [\f[B]\-c\f[R] \f[I]mode\f[R]] [\f[B]\-p\f[R]
-\f[I]K=V\f[R]] [\f[I]VERSION\f[R]|\f[I]SUBCOMMAND\f[R]]
+\f[B]sl\f[R] [\f[I]VERSION\f[R]] [\f[B]\-wWsStTdnl\f[R]] [\f[B]\-a\f[R]
+\f[I]name\f[R]] [\f[B]\-C\f[R]] [\f[B]\-c\f[R] \f[I]mode\f[R]]
+[\f[B]\-p\f[R] \f[I]K=V\f[R]] [\f[I]SUBCOMMAND\f[R]]
 .PP
 \f[B]Options:\f[R]
 .PD 0
@@ -33,7 +33,11 @@ sl \- sl runs across your terminal
 .P
 .PD
 \f[B]\-a\f[R], \f[B]\-\-art\f[R]=\f[I]NAME\f[R] \(em Animation art
-(2026, default: sl, \(dq?\(dq to list)
+(2026, default: sl)
+.PD 0
+.P
+.PD
+\f[B]\-l\f[R], \f[B]\-\-list\f[R] \(em List available animations
 .PD 0
 .P
 .PD
@@ -67,10 +71,6 @@ exit)
 .PD 0
 .P
 .PD
-\f[B]art\-list\f[R] \(em List available animations with their properties
-.PD 0
-.P
-.PD
 \f[B]capture\f[R] \(em Dump captured screen text
 .PD 0
 .P
@@ -89,19 +89,11 @@ exit)
 .PD
 \f[B]mark\f[R] \(em Draw a visual marker at the sweep start column
 .PP
-\f[B]Versions:\f[R]
+\f[B]Versions\f[R] (must be the first argument)\f[B]:\f[R]
 .PD 0
 .P
 .PD
 \f[B]modern\f[R] \(em Toyoda Masashi\(aqs SL (mtoyoda/sl)
-.PD 0
-.P
-.PD
-\f[B]d51\f[R] \(em D51 locomotive (modern)
-.PD 0
-.P
-.PD
-\f[B]c51\f[R] \(em C51 locomotive (modern \-c)
 .PD 0
 .P
 .PD
@@ -123,8 +115,8 @@ gentle punishment.
 Five versions are available: \f[B]1985\f[R] (the original),
 \f[B]2010\f[R], \f[B]2023\f[R], \f[B]2026\f[R], and \f[B]modern\f[R]
 (Toyoda Masashi\(aqs SL).
-Without a version argument, the latest available version is selected
-automatically.
+The version must be specified as the first argument; without it,
+\f[B]2026\f[R] is used.
 .PP
 The \f[B]2026\f[R] version detects existing text on the terminal screen
 and begins sweeping (pushing text off via the \f[B]dch\f[R] terminal
@@ -157,10 +149,12 @@ Show debug information and exit without running the train.
 .TP
 \f[B]\-a\f[R], \f[B]\-\-art\f[R]=\f[I]NAME\f[R]
 Select animation art.
-Use \f[B]\-a?\f[R] or the \f[B]art\-list\f[R] subcommand to list
-available animations.
+Use \f[B]\-l\f[R] to list available animations.
 Default: \f[B]sl\f[R].
 Can also be set via the \f[B]SL_ART\f[R] environment variable.
+.TP
+\f[B]\-l\f[R], \f[B]\-\-list\f[R]
+List available animations with their properties (name, height, step).
 .TP
 \f[B]\-c\f[R], \f[B]\-\-color\f[R]=\f[I]MODE\f[R]
 Set color mode: \f[B]truecolor\f[R], \f[B]24bit\f[R], or \f[B]256\f[R].
@@ -213,14 +207,12 @@ mtoyoda/sl
 .UE \c
 ).
 Supports \f[B]\-a\f[R] (accident), \f[B]\-F\f[R] (fly), \f[B]\-l\f[R]
-(logo), and \f[B]\-c\f[R] (C51) options.
-Use \f[B]d51\f[R] or \f[B]c51\f[R] as version shortcuts.
-Pass mtoyoda options after \f[B]\-\-\f[R] (e.g., \f[B]sl modern \-\- \-a
-\-F\f[R]).
+(logo), and \f[B]\-c\f[R] (C51) options (e.g., \f[B]sl modern \-F
+\-a\f[R]).
 .SH ANIMATIONS
 The 2026 version supports pluggable animation modules selected with the
 \f[B]\-a\f[R] option or \f[B]SL_ART\f[R] environment variable.
-Use \f[B]\-a?\f[R] or \f[B]art\-list\f[R] to list available animations.
+Use \f[B]\-l\f[R] to list available animations.
 .PP
 Each animation defines its own movement step (columns per frame) and
 frame delay, allowing different animations to move at different speeds.
@@ -239,9 +231,6 @@ If not set, a party hat appears randomly with a 1\-in\-20 chance.
 .SH SUBCOMMANDS
 These subcommands are primarily for debugging the screen capture and
 sweep detection mechanism.
-.TP
-\f[B]art\-list\f[R]
-List available animations with their properties (name, height, step).
 .TP
 \f[B]capture\f[R]
 Dump the captured visible screen text to stdout.
