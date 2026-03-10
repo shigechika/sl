@@ -121,6 +121,7 @@ static void clawd_cleanup(animation *a) {
 animation clawd_animation = {
     .name    = "clawd",
     .height  = CLAWD_HEIGHT,
+    .width   = 10,
     .step    = 1,
     .delay   = 50000,
     .init    = clawd_init,

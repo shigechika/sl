@@ -6,24 +6,25 @@
 #
 # Versions (must be the first argument):
 #   2026        Default version (can be omitted)
-#   modern      Toyoda Masashi's SL (mtoyoda/sl)
 #   2023        Unicode art version, always sweeps
 #   2010        Direct terminal control version
 #   1985        Original curses version with retro delay
+#   modern      Toyoda Masashi's SL (mtoyoda/sl)
 #
-# Options (for 2026):
-#   -w/-W, --sweep/--no-sweep   Enable/disable sweep (default: on)
-#   -C, --clear          Sweep the entire screen
-#   -s/-S, --stop/--no-stop    Stop/don't stop at text
+# Options:
+#   -w/-W, --sweep/--no-sweep    Enable/disable sweep (default: on)
+#   -C,    --clear               Sweep the entire screen
+#   -s/-S, --stop/--no-stop      Stop/don't stop at text
 #   -t/-T, --streak/--no-streak  Enable/disable streak (default: on)
-#   -a, --art=NAME       Animation art (default: sl, SL_ART)
-#   -l, --list           List available animations
-#   -c, --color=MODE     Color mode: truecolor/24bit/256
-#   -p, --param=K=V      Set coupler parameter (e.g., STREAK=rumble)
-#   -d, --debug          Show debug info on the last line before running
-#   -n, --dryrun         Dry run (show debug info and exit)
-#   -h, --help           Show help
-#       --version        Show version
+#   -g/-G, --gone/--no-gone      Run off screen to the left
+#   -a,    --art=NAME            Animation art (default: sl, SL_ART)
+#   -l,    --list                List available animations
+#   -c,    --color=MODE          Color mode: truecolor/24bit/256
+#   -p,    --param=K=V           Set coupler parameter (e.g., STREAK=rumble)
+#   -d,    --debug               Show debug info on the last line before running
+#   -n,    --dryrun              Dry run (show debug info and exit)
+#   -h,    --help                Show help
+#          --version             Show version
 #
 # Subcommands:
 #   capture     Dump captured screen text
@@ -66,11 +67,11 @@ help()    { sed -n '3,/^$/{ s/^# \{0,1\}//; p; }' "$self"; exit 0; }
 version() { echo "$VERSION"; exit 0; }
 list() {
     eval "declare -A _ai=($(SL_QUERY=list sl-2026 2>/dev/null))"
-    printf "%-12s %6s %4s\n" "NAME" "HEIGHT" "STEP"
+    printf "%-12s %6s %5s %4s\n" "NAME" "HEIGHT" "WIDTH" "STEP"
     for _k in "${!_ai[@]}"; do
         _name=${_k%%.*} _prop=${_k#*.}
         [[ $_prop == height ]] && \
-            printf "%-12s %6s %4s\n" "$_name" "${_ai[$_k]}" "${_ai[$_name.step]:-2}"
+            printf "%-12s %6s %5s %4s\n" "$_name" "${_ai[$_k]}" "${_ai[$_name.width]:-}" "${_ai[$_name.step]:-2}"
     done | sort
     exit 0
 }
@@ -103,18 +104,19 @@ USAGE="sl [VERSION] [options] [SUBCOMMAND]"
 
 declare -A OPTS=(
     [&REQUIRE]=0.8.0 [&USAGE]="$USAGE" [&DELIM]=
-    [     help | h  ! # show help            ]=
-    [  version |    ! # show version         ]=
-    [    debug | d    # debug mode           ]=
-    [   dryrun | n    # dry-run mode         ]=
-    [    sweep | w ~W # enable sweep (2026)  ]=1
-    [    clear | C    # sweep all (2026)     ]=
-    [     stop | s ~S # stop at text         ]=
-    [   streak | t ~T # enable streak (2026) ]=1
-    [      art | a  : # animation art (2026) ]=
-    [     list | l  ! # list animations      ]=
-    [    color | c  : # color mode           ]=
-    [    param | p  % # coupler parameter    ]=
+    [    help | h  ! # show help         ]=
+    [ version |    ! # show version      ]=
+    [   debug | d    # debug mode        ]=
+    [  dryrun | n    # dry-run mode      ]=
+    [   sweep | w ~W # enable sweep      ]=1
+    [   clear | C    # sweep all         ]=
+    [    stop | s ~S # stop at text      ]=
+    [  streak | t ~T # enable streak     ]=1
+    [    gone | g ~G # run off screen    ]=
+    [     art | a  : # animation art     ]=
+    [    list | l  ! # list animations   ]=
+    [   color | c  : # color mode        ]=
+    [   param | p  % # coupler parameter ]=
 )
 
 . getoptlong.sh OPTS "$@"
@@ -178,7 +180,9 @@ fi
 
 export SL_CAR_SWEEP=${sweep:-0}  SL_SWEEP_COL=$clear_col
 export SL_CAR_STREAK=${streak:-0}
-[[ $stop ]]   && export SL_STOP_COL=$clear_col
+if   [[ $stop   ]]; then export SL_STOP_COL=$clear_col
+elif [[ $gone ]]; then export SL_STOP_COL=-1
+fi
 
 if [[ ${param[STREAK]:-} ]]; then
     IFS=, read -ra _modes <<< "${param[STREAK]}"

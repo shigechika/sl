@@ -15,6 +15,7 @@
 typedef struct animation {
     const char *name;
     int height;
+    int width;       /* body width in columns (for run-off end condition) */
     int step;        /* columns per frame (0 = DEFAULT_STEP) */
     int delay;       /* frame delay in microseconds (0 = DEFAULT_DELAY) */
     void *ctx;
@@ -24,7 +25,8 @@ typedef struct animation {
 } animation;
 
 /* Drawing API — set up by art_set_pos before each frame */
-void art_set_pos(int start_y, int x, int maxcols);
+extern int art_skip;   /* columns clipped on the left (0 when fully visible) */
+void art_set_pos(int start_y, int x);
 void art_goto(int row);
 void art_puts(const char *s);
 #define art_putline(row, s) \

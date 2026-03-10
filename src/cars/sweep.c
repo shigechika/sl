@@ -3,7 +3,6 @@
 typedef struct {
     char dch_seq[20];
     int clear_col;
-    int stop_col;
     int sweep_all;
     int start_y;
     int height;
@@ -19,10 +18,6 @@ static void origin(coupler *cpl) {
         strcpy(ctx->dch_seq, dchp);
 
     ctx->clear_col = sl_option_int("SWEEP_COL", 0);
-    ctx->stop_col = sl_option_int("STOP_COL", -1);
-    /* Round up stop_col to match step alignment so x reaches it exactly. */
-    if (ctx->stop_col >= 0 && step > 1 && (ctx->stop_col % step))
-        ctx->stop_col += step - (ctx->stop_col % step);
     ctx->sweep_all = sl_option_bool("SWEEP_ALL");
     ctx->height = sl_art_height;
     ctx->start_y = LINES - ctx->height - 1;
@@ -32,10 +27,6 @@ static void origin(coupler *cpl) {
 
 static void arriving(coupler *cpl, int x) {
     sweep_ctx *ctx = cpl->ctx;
-    if (ctx->stop_col >= 0 && x <= ctx->stop_col) {
-        sl_step = 0;
-        return;
-    }
     if (x >= ctx->clear_col) return;
 
     int y0 = ctx->sweep_all ? 0 : ctx->start_y;

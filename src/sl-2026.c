@@ -12,22 +12,33 @@
 
 /* Drawing API state — set by art_set_pos before each frame */
 static int art_start_y, art_x, art_maxcols;
+int art_skip;
 
-void art_set_pos(int start_y, int x, int maxcols) {
+void art_set_pos(int start_y, int x) {
     art_start_y = start_y;
-    art_x = x;
-    art_maxcols = maxcols;
+    art_x = x < 0 ? 0 : x;
+    art_skip = x < 0 ? -x : 0;
+    art_maxcols = COLS - art_x;
 }
 
 void art_goto(int row) {
     tputs(tparm(tgoto(cursor_address, art_x, art_start_y + row)), 1, putchar);
 }
 
-/* Output string clipped to art_maxcols display columns.
+/* Output string clipped to art_maxcols display columns,
+   skipping the first art_skip columns (for left-side clipping).
    All SL art characters are single-width, so 1 codepoint = 1 column. */
 void art_puts(const char *s) {
     int n = art_maxcols;
     if (n <= 0) return;
+    /* Skip leading columns when art extends past left edge */
+    int skip = art_skip;
+    while (*s && skip > 0) {
+        unsigned char c = (unsigned char)*s;
+        int bytes = (c < 0x80) ? 1 : (c < 0xE0) ? 2 : (c < 0xF0) ? 3 : 4;
+        s += bytes;
+        skip--;
+    }
     int col = 0;
     while (*s && col < n) {
         unsigned char c = (unsigned char)*s;
@@ -58,6 +69,7 @@ int main() {
         for (int i = 0; animations[i]; i++) {
             animation *a = animations[i];
             printf("[%s.height]=%d\n", a->name, a->height);
+            printf("[%s.width]=%d\n", a->name, a->width);
             printf("[%s.step]=%d\n", a->name, a->step > 0 ? a->step : DEFAULT_STEP);
         }
         return 0;
@@ -78,8 +90,13 @@ int main() {
     anim->init(anim);
 
     sl_art_height = anim->height;
+    int art_width = anim->width > 0 ? anim->width : COLS;
     int step = anim->step > 0 ? anim->step : DEFAULT_STEP;
     int delay = anim->delay > 0 ? anim->delay : DEFAULT_DELAY;
+    int stop_col = sl_option_int("STOP_COL", 0);
+    /* Round up stop_col to match step alignment */
+    if (stop_col >= 0 && step > 1 && (stop_col % step))
+        stop_col += step - (stop_col % step);
     sl_step = -step;
     int start_y = LINES - sl_art_height - 1;
     /* Start just beyond right edge, aligned to step so x reaches 0 */
@@ -88,7 +105,7 @@ int main() {
     signal(SIGINT, on_sigint);
     CALL_COUPLERS(origin);
     int tick = 0;
-    for (int x = start_x; x >= 0 && sl_step && !interrupted; x += sl_step) {
+    for (int x = start_x; x >= -art_width && sl_step && !interrupted; x += sl_step) {
         int maxcols = COLS - x;
         CALL_COUPLERS(arriving, x);
         if (!sl_step && tick == 0) {
@@ -96,12 +113,13 @@ int main() {
             sl_echo();
             return 1;
         }
-        art_set_pos(start_y, x, maxcols);
+        art_set_pos(start_y, x);
         anim->draw(anim, tick);
         CALL_COUPLERS(departed, x);
         fflush(stdout);
         usleep(delay);
         if (maxcols > 0) tick++;
+        if (stop_col >= 0 && x <= stop_col) break;
     }
     CALL_COUPLERS(terminal);
     anim->cleanup(anim);

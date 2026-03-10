@@ -184,6 +184,7 @@ static void d51_init(animation *a) { toyoda_init_with(a, &d51_def); }
 animation d51_animation = {
     .name    = "d51",
     .height  = SMOKE_HEIGHT + D51HEIGHT,   /* 6 + 10 = 16 */
+    .width   = D51LENGTH,
     .step    = 1,
     .delay   = 40000,
     .init    = d51_init,
@@ -240,6 +241,7 @@ static void c51_init(animation *a) { toyoda_init_with(a, &c51_def); }
 animation c51_animation = {
     .name    = "c51",
     .height  = SMOKE_HEIGHT + C51HEIGHT,   /* 6 + 11 = 17 */
+    .width   = C51LENGTH,
     .step    = 1,
     .delay   = 40000,
     .init    = c51_init,
@@ -284,6 +286,7 @@ static void modern_init(animation *a) { toyoda_init_with(a, &modern_def); }
 animation modern_animation = {
     .name    = "modern",
     .height  = SMOKE_HEIGHT + LOGOHEIGHT,   /* 6 + 6 = 12 */
+    .width   = LOGOLENGTH,
     .step    = 1,
     .delay   = 40000,
     .init    = modern_init,

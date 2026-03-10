@@ -39,7 +39,7 @@ static void sl_draw(animation *a, int tick) {
         art_goto(y);
         art_puts(c->lines[y]);
     }
-    if (strlen(c->smoke) + 3 < SMOKE_BUFSZ)
+    if (art_skip == 0 && strlen(c->smoke) + 3 < SMOKE_BUFSZ)
         strcat(c->smoke, " o");
 }
 
@@ -51,6 +51,7 @@ static void sl_cleanup(animation *a) {
 animation sl_animation = {
     .name    = "sl",
     .height  = SL_HEIGHT,
+    .width   = 16,
     .init    = sl_init,
     .draw    = sl_draw,
     .cleanup = sl_cleanup,
