@@ -4,9 +4,9 @@
 .SH NAME
 sl \- sl runs across your terminal
 .SH SYNOPSIS
-\f[B]sl\f[R] [\f[I]VERSION\f[R]] [\f[B]\-wWsStTdnl\f[R]] [\f[B]\-a\f[R]
-\f[I]name\f[R]] [\f[B]\-C\f[R]] [\f[B]\-c\f[R] \f[I]mode\f[R]]
-[\f[B]\-p\f[R] \f[I]K=V\f[R]] [\f[I]SUBCOMMAND\f[R]]
+\f[B]sl\f[R] [\f[I]VERSION\f[R]] [\f[B]\-wWsStTgGdnl\f[R]]
+[\f[B]\-a\f[R] \f[I]name\f[R]] [\f[B]\-C\f[R]] [\f[B]\-c\f[R]
+\f[I]mode\f[R]] [\f[B]\-p\f[R] \f[I]K=V\f[R]] [\f[I]SUBCOMMAND\f[R]]
 .PP
 \f[B]Options:\f[R]
 .PD 0
@@ -29,6 +29,11 @@ sl \- sl runs across your terminal
 \f[B]\-t\f[R]/\f[B]\-T\f[R],
 \f[B]\-\-streak\f[R]/\f[B]\-\-no\-streak\f[R] \(em Enable/disable streak
 (2026, default: on)
+.PD 0
+.P
+.PD
+\f[B]\-g\f[R]/\f[B]\-G\f[R], \f[B]\-\-gone\f[R]/\f[B]\-\-no\-gone\f[R]
+\(em Run off screen to the left (2026)
 .PD 0
 .P
 .PD
@@ -171,6 +176,11 @@ Sweep the entire screen instead of just the train area.
 .TP
 \f[B]\-s\f[R]/\f[B]\-S\f[R], \f[B]\-\-stop\f[R]/\f[B]\-\-no\-stop\f[R]
 Stop or don\(aqt stop the train at existing text (default: off).
+.TP
+\f[B]\-g\f[R]/\f[B]\-G\f[R], \f[B]\-\-gone\f[R]/\f[B]\-\-no\-gone\f[R]
+Let the train run off screen to the left until it fully disappears
+(default: off).
+Without this option, the train stops at the left edge.
 .SS Streak
 .TP
 \f[B]\-t\f[R]/\f[B]\-T\f[R], \f[B]\-\-streak\f[R]/\f[B]\-\-no\-streak\f[R]
@@ -259,7 +269,8 @@ Set \f[B]SL_CAR_SWEEP=0\f[R] to disable.
 .IP \(bu 2
 \f[B]SL_SWEEP_COL\f[R] \(em Column at which sweeping begins.
 .IP \(bu 2
-\f[B]SL_STOP_COL\f[R] \(em Column at which the train stops.
+\f[B]SL_STOP_COL\f[R] \(em Column at which the train stops (default: 0 =
+left edge, \-1 = run off screen).
 .IP \(bu 2
 \f[B]SL_SWEEP_ALL\f[R] \(em Sweep all screen lines instead of just the
 train area.

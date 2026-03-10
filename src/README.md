@@ -4,13 +4,14 @@ sl - sl runs across your terminal
 
 # SYNOPSIS
 
-**sl** \[*VERSION*] \[**-wWsStTdnl**] \[**-a** *name*] \[**-C**] \[**-c** *mode*] \[**-p** *K=V*] \[*SUBCOMMAND*]
+**sl** \[*VERSION*] \[**-wWsStTgGdnl**] \[**-a** *name*] \[**-C**] \[**-c** *mode*] \[**-p** *K=V*] \[*SUBCOMMAND*]
 
 **Options:**\
 **-w**/**-W**, **--sweep**/**--no-sweep** — Enable/disable sweep (2026, default: on)\
 **-C**, **--clear** — Sweep the entire screen (2026)\
 **-s**/**-S**, **--stop**/**--no-stop** — Stop/don't stop at text (2026)\
 **-t**/**-T**, **--streak**/**--no-streak** — Enable/disable streak (2026, default: on)\
+**-g**/**-G**, **--gone**/**--no-gone** — Run off screen to the left (2026)\
 **-a**, **--art**=*NAME* — Animation art (2026, default: sl)\
 **-l**, **--list** — List available animations\
 **-c**, **--color**=*MODE* — Color mode: truecolor/24bit/256\
@@ -105,6 +106,12 @@ On unsupported terminals or platforms, the train always sweeps
 - **-s**/**-S**, **--stop**/**--no-stop**
 
   Stop or don't stop the train at existing text (default: off).
+
+- **-g**/**-G**, **--gone**/**--no-gone**
+
+  Let the train run off screen to the left until it fully
+  disappears (default: off).  Without this option, the train
+  stops at the left edge.
 
 ## Streak
 
@@ -209,7 +216,8 @@ The sweep coupler deletes characters at the left edge as the
 train passes.  Set **SL\_CAR\_SWEEP=0** to disable.
 
 - **SL\_SWEEP\_COL** — Column at which sweeping begins.
-- **SL\_STOP\_COL** — Column at which the train stops.
+- **SL\_STOP\_COL** — Column at which the train stops (default: 0 = left edge,
+  -1 = run off screen).
 - **SL\_SWEEP\_ALL** — Sweep all screen lines instead of just the train area.
 
 ## Streak
