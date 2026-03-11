@@ -10,6 +10,11 @@ extern animation clawd_animation;
 extern animation d51_animation;
 extern animation c51_animation;
 extern animation modern_animation;
+extern animation invader_animation;
+extern animation squid_animation;
+extern animation crab_animation;
+extern animation octopus_animation;
+extern animation ufo_animation;
 
 animation *animations[] = {
     &sl_animation,
@@ -17,6 +22,11 @@ animation *animations[] = {
     &d51_animation,
     &c51_animation,
     &modern_animation,
+    &invader_animation,
+    &squid_animation,
+    &crab_animation,
+    &octopus_animation,
+    &ufo_animation,
     NULL
 };
 

@@ -205,6 +205,20 @@ Ported from mtoyoda/sl.
 Logo-style locomotive with coal car and passenger cars.
 Ported from mtoyoda/sl.
 
+## invader
+
+Space Invaders formation with three alien types (squid, crab, octopus).
+Sprites use quarter-block encoding with half-column shift for
+sub-character edge smoothing.
+
+## squid / crab / octopus
+
+Individual Space Invaders aliens with 2-frame animation.
+
+## ufo
+
+Space Invaders mystery ship (UFO).
+
 # SUBCOMMANDS
 
 These subcommands are primarily for debugging the screen capture and
