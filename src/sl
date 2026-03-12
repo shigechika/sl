@@ -21,6 +21,7 @@
 #   -a,    --art=NAME            Animation art (repeatable; default: sl)
 #   -l,    --list                List available animations
 #          --color=MODE          Color mode: truecolor/24bit/256
+#   -m,    --mode=MODE           Smoke mode: dark/light (default: auto-detect)
 #   -p,    --param=K=V           Set coupler parameter (e.g., STREAK=rumble)
 #   -d,    --debug               Show debug info on the last line before running
 #   -n,    --dryrun              Dry run (show debug info and exit)
@@ -77,6 +78,14 @@ list() {
     exit 0
 }
 
+detect_terminal_mode() {
+    local lum
+    lum=$(perl -Mlib="$bindir/perl5/lib/perl5" \
+               -MGetopt::EX::termcolor=luminance -e luminance 2>/dev/null) || return
+    [[ $lum ]] || return
+    (( lum < 50 )) && echo dark || echo light
+}
+
 # Load sweep support: export SL_ART, query art info, source sl-sweep.sh
 load_sweep() {
     [[ $art ]] && export SL_ART=$art
@@ -131,6 +140,7 @@ declare -A OPTS=(
     [     art | a  @ # animation art     ]=
     [    list | l  ! # list animations   ]=
     [   color |    : # color mode        ]=
+    [    mode | m  : # dark or light mode ]=
     [   param | p  % # coupler parameter ]=
 )
 
@@ -216,6 +226,15 @@ run_sl() {
         256)             unset COLORTERM ;;
         ?*)              error "unknown color mode: $color" ;;
     esac
+    # Detect dark/light mode for smoke
+    local _mode=${mode:-$(detect_terminal_mode)}
+    : ${_mode:=dark}
+    case $_mode in
+        dark)  export SL_DARK=1 ;;
+        light) export SL_DARK=0 ;;
+        *)     error "unknown mode: $_mode (use dark or light)" ;;
+    esac
+
     sl-2026 "$@"
 }
 

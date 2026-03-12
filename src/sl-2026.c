@@ -11,7 +11,8 @@
 #include "art/art.h"
 
 /* Drawing API state — set by art_set_pos before each frame */
-static int art_start_y, art_x, art_maxcols;
+static int art_start_y, art_x;
+int art_maxcols;
 int art_skip;
 
 void art_set_pos(int start_y, int x) {
@@ -90,7 +91,6 @@ int main() {
     anim->init(anim);
 
     sl_art_height = anim->height;
-    int art_width = anim->width > 0 ? anim->width : COLS;
     int step = anim->step > 0 ? anim->step : DEFAULT_STEP;
     int delay = anim->delay > 0 ? anim->delay : DEFAULT_DELAY;
     int stop_col = sl_option_int("STOP_COL", 0);
@@ -105,7 +105,7 @@ int main() {
     signal(SIGINT, on_sigint);
     CALL_COUPLERS(origin);
     int tick = 0;
-    for (int x = start_x; x >= -art_width && sl_step && !interrupted; x += sl_step) {
+    for (int x = start_x; x >= -(anim->width > 0 ? anim->width : COLS) && sl_step && !interrupted; x += sl_step) {
         int maxcols = COLS - x;
         CALL_COUPLERS(arriving, x);
         if (!sl_step && tick == 0) {

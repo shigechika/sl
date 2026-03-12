@@ -25,7 +25,8 @@ typedef struct animation {
 } animation;
 
 /* Drawing API — set up by art_set_pos before each frame */
-extern int art_skip;   /* columns clipped on the left (0 when fully visible) */
+extern int art_skip;     /* columns clipped on the left (0 when fully visible) */
+extern int art_maxcols;  /* max columns to output (COLS - art_x) */
 void art_set_pos(int start_y, int x);
 void art_goto(int row);
 void art_puts(const char *s);
