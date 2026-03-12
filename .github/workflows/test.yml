@@ -22,7 +22,7 @@ jobs:
       - name: Install Perl dependencies
         working-directory: src
         run: |
-          curl -sL https://cpanmin.us | perl - --notest --installdeps .
+          curl -sL https://cpanmin.us | sudo perl - --notest --installdeps .
           perl -MText::VisualWidth::PP -e1
           perl -MGetopt::EX::termcolor -e1
 
