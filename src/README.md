@@ -4,7 +4,7 @@ sl - sl runs across your terminal
 
 # SYNOPSIS
 
-**sl** \[**-wWsStTgGdnl**] \[**-a** *name*] \[**-c**] \[**--color** *mode*] \[**-p** *K=V*] \[*ART* ...]
+**sl** \[**-wWsStTgGdnlm**] \[**-a** *name*] \[**-c**] \[**--color** *mode*] \[**-m** *mode*] \[**-p** *K=V*] \[*ART* ...]
 
 **Options:**\
   **-w**/**-W**, **--sweep**/**--no-sweep** — Enable/disable sweep (2026, default: on)\
@@ -15,6 +15,7 @@ sl - sl runs across your terminal
   **-a**, **--art**=*NAME* — Animation art (2026, repeatable; default: sl)\
   **-l**, **--list** — List available animations\
   **--color**=*MODE* — Color mode: truecolor/24bit/256\
+  **-m**, **--mode**=*MODE* — Smoke mode: dark/light (default: auto-detect)\
   **-p**, **--param**=*K=V* — Set coupler parameter (e.g., STREAK=rumble)\
   **-d**, **--debug** — Show debug info on the last line before running\
   **-n**, **--dryrun** — Dry run (show debug info and exit)\
@@ -90,6 +91,12 @@ On unsupported terminals or platforms, the train always sweeps
 - **--color**=*MODE*
 
   Set color mode: **truecolor**, **24bit**, or **256**.
+
+- **-m**, **--mode**=*MODE*
+
+  Set smoke color mode: **dark** or **light**.  When omitted, the
+  terminal background luminance is auto-detected.  Dark mode renders
+  smoke from white to black; light mode renders from black to white.
 
 - **-p**, **--param**=*KEY*=*VALUE*
 
@@ -178,6 +185,8 @@ frame delay, allowing different animations to move at different speeds.
 ## sl
 
 The default SL animation with growing smoke trail.
+Smoke fades with distance using 256-color grayscale, and continues
+fading after the train stops until it disappears completely.
 Moves 2 columns per frame.
 
 ## clawd
@@ -272,6 +281,8 @@ Set **SL\_CAR\_STREAK=0** to disable.
 
 - **SL\_STOP\_COL** — Column at which the train stops (default: 0 = left edge,
   -1 = run off screen).
+- **SL\_DARK** — Smoke color direction: 1 = dark background (white→black),
+  0 = light background (black→white).
 
 # TERMINAL TIPS
 
