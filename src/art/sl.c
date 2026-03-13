@@ -168,6 +168,7 @@ animation sl_animation = {
     .name    = "sl",
     .height  = SL_HEIGHT,
     .width   = 16,
+    .step    = 200,
     .init    = sl_init,
     .draw    = sl_draw,
     .cleanup = sl_cleanup,

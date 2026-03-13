@@ -185,7 +185,7 @@ animation d51_animation = {
     .name    = "d51",
     .height  = SMOKE_HEIGHT + D51HEIGHT,   /* 6 + 10 = 16 */
     .width   = D51LENGTH,
-    .step    = 1,
+    .step    = 100,
     .delay   = 40000,
     .init    = d51_init,
     .draw    = draw,
@@ -242,7 +242,7 @@ animation c51_animation = {
     .name    = "c51",
     .height  = SMOKE_HEIGHT + C51HEIGHT,   /* 6 + 11 = 17 */
     .width   = C51LENGTH,
-    .step    = 1,
+    .step    = 100,
     .delay   = 40000,
     .init    = c51_init,
     .draw    = draw,
@@ -287,7 +287,7 @@ animation modern_animation = {
     .name    = "modern",
     .height  = SMOKE_HEIGHT + LOGOHEIGHT,   /* 6 + 6 = 12 */
     .width   = LOGOLENGTH,
-    .step    = 1,
+    .step    = 100,
     .delay   = 40000,
     .init    = logo_init,
     .draw    = draw,

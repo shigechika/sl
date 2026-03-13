@@ -267,7 +267,7 @@ static void invader_cleanup(animation *a) {
 animation invader_animation = {
     .name    = "invader",
     .height  = INVADER_HEIGHT,
-    .step    = 1,
+    .step    = 100,
     .delay   = 60000,
     .init    = invader_init,
     .draw    = invader_draw,
@@ -310,8 +310,7 @@ static void alien_cleanup(animation *a) {
     animation cname##_animation = { \
         .name    = #cname, \
         .height  = ALIEN_ROWS, \
-        .step    = 1, \
-        .delay   = DEFAULT_DELAY / 2, \
+        .step    = 50, \
         .init    = cname##_init, \
         .draw    = cname##_draw, \
         .cleanup = alien_cleanup, \

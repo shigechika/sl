@@ -14,6 +14,7 @@
 static int art_start_y, art_x;
 int art_maxcols;
 int art_skip;
+int art_subx;
 
 void art_set_pos(int start_y, int x) {
     art_start_y = start_y;
@@ -92,34 +93,37 @@ int main() {
 
     sl_art_height = anim->height;
     int step = anim->step > 0 ? anim->step : DEFAULT_STEP;
-    int delay = anim->delay > 0 ? anim->delay : DEFAULT_DELAY;
+    int delay = anim->delay > 0 ? anim->delay : DEFAULT_DELAY * step / 100;
     int stop_col = sl_option_int("STOP_COL", 0);
-    /* Round up stop_col to match step alignment */
-    if (stop_col >= 0 && step > 1 && (stop_col % step))
-        stop_col += step - (stop_col % step);
-    sl_step = -step;
+    /* Round up stop_col to match step alignment (in column units) */
+    int step_cols = (step + 99) / 100;  /* ceiling: 50→1, 100→1, 200→2 */
+    if (stop_col >= 0 && step_cols > 1 && (stop_col % step_cols))
+        stop_col += step_cols - (stop_col % step_cols);
+    sl_step = -step_cols;
     int start_y = LINES - sl_art_height - 1;
     /* Start just beyond right edge, aligned to step so x reaches 0 */
-    int start_x = ((COLS + step - 1) / step) * step;
+    int start_x = ((COLS * 100 + step - 1) / step) * step;
     sl_noecho();
     signal(SIGINT, on_sigint);
     CALL_COUPLERS(origin);
     int tick = 0;
-    for (int x = start_x; x >= -(anim->width > 0 ? anim->width : COLS) && sl_step && !interrupted; x += sl_step) {
-        int maxcols = COLS - x;
-        CALL_COUPLERS(arriving, x);
+    for (int x = start_x; x >= -(anim->width > 0 ? anim->width * 100 : COLS * 100) && sl_step && !interrupted; x -= step) {
+        int col = x / 100;
+        int maxcols = COLS - col;
+        CALL_COUPLERS(arriving, col);
         if (!sl_step && tick == 0) {
             anim->cleanup(anim);
             sl_echo();
             return 1;
         }
-        art_set_pos(start_y, x);
+        art_subx = x % 100;
+        art_set_pos(start_y, col);
         anim->draw(anim, tick);
-        CALL_COUPLERS(departed, x);
+        CALL_COUPLERS(departed, col);
         fflush(stdout);
         usleep(delay);
         if (maxcols > 0) tick++;
-        if (stop_col >= 0 && x <= stop_col) break;
+        if (stop_col >= 0 && col <= stop_col) break;
     }
     CALL_COUPLERS(terminal);
     anim->cleanup(anim);
