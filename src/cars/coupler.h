@@ -22,7 +22,7 @@
  *      - x: current SL position (decreasing from COLS toward 0)
  *    - terminal: called once after the animation loop (終着駅)
  *    - COLS, LINES: available as globals (extern in sl.h)
- *    - sl_step: set to 0 to stop, +2 to reverse (default -2)
+ *    - sl_step: negative column step (set to 0 to stop)
  *    - Any callback may be NULL if not needed.
  *
  * 2. Declare the constructor in this header (below).

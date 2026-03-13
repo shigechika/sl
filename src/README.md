@@ -217,12 +217,12 @@ Ported from mtoyoda/sl.
 ## invader
 
 Space Invaders formation with three alien types (squid, crab, octopus).
-Sprites use quarter-block encoding with half-column shift for
-sub-character edge smoothing.
+Sprites use quarter-block encoding for sub-character resolution.
 
 ## squid / crab / octopus
 
 Individual Space Invaders aliens with 2-frame animation.
+Move at half-column steps for smooth sub-character motion.
 
 ## ufo
 

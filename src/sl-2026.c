@@ -123,7 +123,7 @@ int main() {
         fflush(stdout);
         usleep(delay);
         if (maxcols > 0) tick++;
-        if (stop_col >= 0 && col <= stop_col) break;
+        if (stop_col >= 0 && x <= stop_col * 100) break;
     }
     CALL_COUPLERS(terminal);
     anim->cleanup(anim);
