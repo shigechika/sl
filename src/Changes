@@ -1,5 +1,10 @@
 {{$NEXT}}
 
+v2026.8.1 2026-03-13
+
+    - Rework invader sprites: double horizontal resolution with direct 2x2 encoding
+    - Set step=1 for individual alien animations to fix stop alignment gap
+
 v2026.8 2026-03-12
 
     - Add grayscale smoke fading to SL animation (256-color, distance-based)
