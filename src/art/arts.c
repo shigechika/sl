@@ -16,6 +16,7 @@ extern animation crab_animation;
 extern animation octopus_animation;
 extern animation ufo_animation;
 extern animation swim_animation;
+extern animation bike_animation;
 
 animation *animations[] = {
     &sl_animation,
@@ -29,6 +30,7 @@ animation *animations[] = {
     &octopus_animation,
     &ufo_animation,
     &swim_animation,
+    &bike_animation,
     NULL
 };
 
